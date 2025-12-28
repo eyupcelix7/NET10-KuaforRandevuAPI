@@ -15,9 +15,16 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         {
             _context = context;
         }
-        public bool checkNameExists(string barberName)
+        public bool checkNameExists(string barberName, int? barberId = null)
         {
-            return _context.Barbers.Any(x=> x.BarberName!.Equals(barberName));
+            if(barberId == null)
+            {
+                return _context.Barbers.Any(x=> x.BarberName!.Equals(barberName));
+            }
+            else
+            {
+                return _context.Barbers.Any(x => x.BarberName!.Equals(barberName) && x.Id != barberId);
+            }
         }
 
         public async Task<Barber?> GetBarberByIdWithServices(int id)

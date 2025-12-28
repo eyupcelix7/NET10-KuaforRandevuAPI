@@ -16,13 +16,15 @@ namespace KuaforRandevuAPI.Business.Concrete
         private readonly IRepository<Barber> _repository;
         private readonly IBarberRepository _barberRepository;
         private readonly IValidator<CreateBarberDto> _createBarberValidator;
+        private readonly IValidator<UpdateBarberDto> _updateBarberValidator;
         private readonly IMapper _mapper;
-        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator, IMapper mapper, IBarberRepository barberRepository)
+        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator, IMapper mapper, IBarberRepository barberRepository, IValidator<UpdateBarberDto> updateBarberValidator)
         {
             _repository = repository;
             _createBarberValidator = createBarberValidator;
             _mapper = mapper;
             _barberRepository = barberRepository;
+            _updateBarberValidator = updateBarberValidator;
         }
         public async Task<List<ResultBarberDto>> GetAllBarber()
         {
@@ -53,15 +55,27 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task UpdateBarber(UpdateBarberDto dto)
         {
-            var updatedBarber = await GetBarberById(dto.Id);
-            updatedBarber.BarberName = dto.BarberName;
-            updatedBarber.JobStartTime = dto.JobStartTime;
-            updatedBarber.JobEndTime = dto.JobEndTime;
+            var validationResult = _updateBarberValidator.Validate(dto);
+            if (validationResult.IsValid)
+            {
+                var updatedBarber = await _repository.GetById(dto.Id);
+                if (updatedBarber != null)
+                {
+                    updatedBarber.BarberName = dto.BarberName;
+                    updatedBarber.JobStartTime = dto.JobStartTime;
+                    updatedBarber.JobEndTime = dto.JobEndTime;
+                    await _repository.Update(updatedBarber);
+                }
+            }
+            else
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
         }
         public async Task RemoveBarber(int id)
         {
             var barber = await _repository.GetById(id);
-            if(barber != null)
+            if (barber != null)
             {
                 await _repository.Remove(barber);
             }

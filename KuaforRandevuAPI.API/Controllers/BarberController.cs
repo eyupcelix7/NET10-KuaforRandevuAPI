@@ -37,7 +37,7 @@ namespace KuaforRandevuAPI.API.Controllers
         {
             try
             {
-                _service.CreateBarber(dto);
+                await _service.CreateBarber(dto);
                 return Ok(dto);
             }
             catch (ValidationException ex)

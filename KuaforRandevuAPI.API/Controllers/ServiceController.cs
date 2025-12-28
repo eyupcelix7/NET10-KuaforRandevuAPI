@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Dtos.Services;
 using Microsoft.AspNetCore.Http;
@@ -20,14 +21,34 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
-            await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
-            return Ok(dto);
+            try
+            {
+                await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
+                return Ok(dto);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Errors.Select(x => x.ErrorMessage).FirstOrDefault()
+                });
+            }
         }
         [HttpPut("UpdateService")]
         public async Task<IActionResult> UpdateService(UpdateServiceDto dto)
         {
-            await _service.UpdateService(dto);
-            return Ok(dto);
+            try
+            {
+                await _service.UpdateService(dto);
+                return Ok(dto);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Errors.Select(x => x.ErrorMessage).FirstOrDefault()
+                });
+            }
         }
         [HttpDelete]
         public async Task<IActionResult> RemoveService(int id)
