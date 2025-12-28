@@ -28,7 +28,10 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
                 cfg.AddProfile<BarberProfile>();
             });
             services.AddScoped<BarberContext>();
+            // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IBarberRepository), typeof(BarberRepository));
+            // Services
             services.AddScoped(typeof(IBarberService), typeof(BarberService));
 
             services.AddTransient<IValidator<CreateBarberDto>, CreateBarberValidator>();
