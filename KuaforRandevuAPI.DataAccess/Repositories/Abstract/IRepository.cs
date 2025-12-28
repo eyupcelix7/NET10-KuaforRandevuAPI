@@ -9,8 +9,8 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Abstract
     {
         Task<T?> GetById(int id);
         Task<List<T>> GetAll();
-        void Add(T entity);
-        void Update(T entity);
+        Task Add(T entity);
+        Task Update(T entity);
         Task Remove(T entity);
     }
 }

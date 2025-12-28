@@ -24,7 +24,6 @@ namespace KuaforRandevuAPI.Business.Concrete
             _mapper = mapper;
             _barberRepository = barberRepository;
         }
-
         public async Task<List<ResultBarberDto>> GetAllBarber()
         {
             var barbers = await _repository.GetAll();
@@ -35,12 +34,12 @@ namespace KuaforRandevuAPI.Business.Concrete
             var barber = await _repository.GetById(id);
             return _mapper.Map<ResultBarberDto>(barber);
         }
-        public void CreateBarber(CreateBarberDto dto)
+        public async Task CreateBarber(CreateBarberDto dto)
         {
             var validationResult = _createBarberValidator.Validate(dto);
             if (validationResult.IsValid)
             {
-                _repository.Add(_mapper.Map<Barber>(dto));
+                await _repository.Add(_mapper.Map<Barber>(dto));
             }
             else
             {
@@ -51,6 +50,21 @@ namespace KuaforRandevuAPI.Business.Concrete
         {
             var values = await _barberRepository.GetBarberByIdWithServices(id);
             return _mapper.Map<ResultBarberDto>(values);
+        }
+        public async Task UpdateBarber(UpdateBarberDto dto)
+        {
+            var updatedBarber = await GetBarberById(dto.Id);
+            updatedBarber.BarberName = dto.BarberName;
+            updatedBarber.JobStartTime = dto.JobStartTime;
+            updatedBarber.JobEndTime = dto.JobEndTime;
+        }
+        public async Task RemoveBarber(int id)
+        {
+            var barber = await _repository.GetById(id);
+            if(barber != null)
+            {
+                await _repository.Remove(barber);
+            }
         }
     }
 }

@@ -10,7 +10,9 @@ namespace KuaforRandevuAPI.Business.Abstract
     {
         Task<List<ResultBarberDto>> GetAllBarber();
         Task<ResultBarberDto> GetBarberById(int id);
-        void CreateBarber(CreateBarberDto dto);
         Task<ResultBarberDto> GetBarberByIdWithServices(int id);
+        Task CreateBarber(CreateBarberDto dto);
+        Task UpdateBarber(UpdateBarberDto dto);
+        Task RemoveBarber(int id);
     }
 }

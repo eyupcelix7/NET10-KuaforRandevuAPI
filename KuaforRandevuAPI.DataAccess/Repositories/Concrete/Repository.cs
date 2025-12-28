@@ -16,10 +16,10 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         {
             _context = context;
         }
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         public async Task<List<T>> GetAll()
         {
@@ -36,12 +36,13 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
             var value = GetById(entity.Id);
             if (value != null)
             {
                 var updatedEntity = _context.Set<T>().Update(entity);
+                await _context.SaveChangesAsync();
             }
         }
     }
