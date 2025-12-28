@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="KuaforRandevuAPI.API/KuaforRandevuAPI.API.csproj" />
+  <Project Path="KuaforRandevuAPI.Business/KuaforRandevuAPI.Business.csproj" />
+  <Project Path="KuaforRandevuAPI.Common/KuaforRandevuAPI.Common.csproj" />
+  <Project Path="KuaforRandevuAPI.DataAccess/KuaforRandevuAPI.DataAccess.csproj" />
+  <Project Path="KuaforRandevuAPI.Dtos/KuaforRandevuAPI.Dtos.csproj" />
+  <Project Path="KuaforRandevuAPI.Entities/KuaforRandevuAPI.Entities.csproj" />
+</Solution>
