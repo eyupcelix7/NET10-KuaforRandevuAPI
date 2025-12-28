@@ -26,13 +26,14 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<BarberProfile>();
+                cfg.AddProfile<ServiceProfile>();
             });
-            services.AddScoped<BarberContext>();
             // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IBarberRepository), typeof(BarberRepository));
             // Services
             services.AddScoped(typeof(IBarberService), typeof(BarberService));
+            services.AddScoped(typeof(IServiceService), typeof(ServiceService));
 
             services.AddTransient<IValidator<CreateBarberDto>, CreateBarberValidator>();
         }

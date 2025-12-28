@@ -16,7 +16,23 @@ namespace KuaforRandevuAPI.API.Controllers
         {
             _service = service;
         }
-        [HttpPost]
+        [HttpGet("GetAllBarbers")]
+        public async Task<IActionResult> GetAllBarbers()
+        {
+            var barbers = await _service.GetAllBarber();
+            return Ok(barbers);
+        }
+        [HttpGet("GetBarberById/{id}")]
+        public async Task<IActionResult> GetBarberById(int id)
+        {
+            var barber = await _service.GetBarberById(id);
+            if(barber == null)
+            {
+                return NotFound();
+            }
+            return Ok(barber);
+        }
+        [HttpPost("CreateBarber")]
         public async Task<IActionResult> CreateBarber(CreateBarberDto dto)
         {
             try
@@ -31,6 +47,12 @@ namespace KuaforRandevuAPI.API.Controllers
                     error = ex.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
                 });
             }
+        }
+        [HttpGet("GetBarberByIdWithServices/{id}")]
+        public async Task<IActionResult> GetBarberByIdWithServices(int id)
+        {
+            var values = await _service.GetBarberByIdWithServices(id);
+            return Ok(values);
         }
     }
 }

@@ -8,5 +8,7 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Abstract
     public interface IBarberRepository
     {
         bool checkNameExists(string barberName);
+        Task<Barber?> GetBarberByIdWithServices(int id);
+        Task<List<Barber?>> GetBarbersWithServices();
     }
 }

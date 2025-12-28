@@ -14,13 +14,26 @@ namespace KuaforRandevuAPI.Business.Concrete
     public class BarberService : IBarberService
     {
         private readonly IRepository<Barber> _repository;
+        private readonly IBarberRepository _barberRepository;
         private readonly IValidator<CreateBarberDto> _createBarberValidator;
         private readonly IMapper _mapper;
-        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator, IMapper mapper)
+        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator, IMapper mapper, IBarberRepository barberRepository)
         {
             _repository = repository;
             _createBarberValidator = createBarberValidator;
             _mapper = mapper;
+            _barberRepository = barberRepository;
+        }
+
+        public async Task<List<ResultBarberDto>> GetAllBarber()
+        {
+            var barbers = await _repository.GetAll();
+            return _mapper.Map<List<ResultBarberDto>>(barbers);
+        }
+        public async Task<ResultBarberDto> GetBarberById(int id)
+        {
+            var barber = await _repository.GetById(id);
+            return _mapper.Map<ResultBarberDto>(barber);
         }
         public void CreateBarber(CreateBarberDto dto)
         {
@@ -33,6 +46,11 @@ namespace KuaforRandevuAPI.Business.Concrete
             {
                 throw new ValidationException(validationResult.Errors);
             }
+        }
+        public async Task<ResultBarberDto> GetBarberByIdWithServices(int id)
+        {
+            var values = await _barberRepository.GetBarberByIdWithServices(id);
+            return _mapper.Map<ResultBarberDto>(values);
         }
     }
 }

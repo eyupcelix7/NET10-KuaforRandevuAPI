@@ -4,6 +4,7 @@ using KuaforRandevuAPI.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KuaforRandevuAPI.DataAccess.Migrations
 {
     [DbContext(typeof(BarberContext))]
-    partial class BarberContextModelSnapshot : ModelSnapshot
+    [Migration("20251228174107_editTimeColumn")]
+    partial class editTimeColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,8 +88,8 @@ namespace KuaforRandevuAPI.DataAccess.Migrations
                     b.Property<int>("BarberId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ServiceDuration")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<TimeSpan>("ServiceDuration")
+                        .HasColumnType("time");
 
                     b.Property<string>("ServiceName")
                         .HasColumnType("nvarchar(max)");
