@@ -9,6 +9,8 @@ namespace KuaforRandevuAPI.Business.Abstract
     {
         Task<List<ResultServiceDto>> GetAllService();
         Task<ResultServiceDto> GetServiceById(int id);
-        void CreateService(CreateServiceDto dto);
+        Task CreateService(CreateServiceDto dto);
+        Task UpdateService(UpdateServiceDto dto);
+        Task RemoveService(int id);
     }
 }

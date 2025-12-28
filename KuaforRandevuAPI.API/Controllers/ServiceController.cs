@@ -20,8 +20,20 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
-            _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
-            return Ok("Servis Oluşturuldu");
+            await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
+            return Ok(dto);
+        }
+        [HttpPut("UpdateService")]
+        public async Task<IActionResult> UpdateService(UpdateServiceDto dto)
+        {
+            await _service.UpdateService(dto);
+            return Ok(dto);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> RemoveService(int id)
+        {
+            await _service.RemoveService(id);
+            return Ok("Silme işlemi başarılı");
         }
     }
 }

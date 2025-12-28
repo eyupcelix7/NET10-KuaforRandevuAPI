@@ -38,10 +38,9 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         }
         public async Task Update(T entity)
         {
-            var value = GetById(entity.Id);
-            if (value != null)
+            if (entity != null)
             {
-                var updatedEntity = _context.Set<T>().Update(entity);
+                _context.Set<T>().Update(entity);
                 await _context.SaveChangesAsync();
             }
         }

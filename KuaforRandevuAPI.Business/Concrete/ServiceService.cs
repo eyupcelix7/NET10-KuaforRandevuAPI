@@ -18,9 +18,9 @@ namespace KuaforRandevuAPI.Business.Concrete
             _mapper = mapper;
             _repository = repository;
         }
-        public void CreateService(CreateServiceDto dto)
+        public async Task CreateService(CreateServiceDto dto)
         {
-            _repository.Add(_mapper.Map<Service>(dto));
+            await _repository.Add(_mapper.Map<Service>(dto));
         }
 
         public Task<List<ResultServiceDto>> GetAllService()
@@ -31,6 +31,23 @@ namespace KuaforRandevuAPI.Business.Concrete
         public Task<ResultServiceDto> GetServiceById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task UpdateService(UpdateServiceDto dto)
+        {
+            var service = await _repository.GetById(dto.Id);
+            if (service != null)
+            {
+                service.ServiceName = dto.ServiceName;
+                service.ServicePrice = dto.ServicePrice;
+                service.ServiceDuration = dto.ServiceDuration;
+                await _repository.Update(service);
+            }
+        }
+        public async Task RemoveService(int id)
+        {
+            var service = await _repository.GetById(id);
+            _repository.Remove(service);
         }
     }
 }
