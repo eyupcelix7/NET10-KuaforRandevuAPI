@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KuaforRandevuAPI.Common\KuaforRandevuAPI.Common.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.DataAccess\KuaforRandevuAPI.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

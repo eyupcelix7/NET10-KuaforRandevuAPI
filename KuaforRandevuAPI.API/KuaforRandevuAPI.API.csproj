@@ -8,6 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KuaforRandevuAPI.Business\KuaforRandevuAPI.Business.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.Common\KuaforRandevuAPI.Common.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.DataAccess\KuaforRandevuAPI.DataAccess.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.Dtos\KuaforRandevuAPI.Dtos.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.Entities\KuaforRandevuAPI.Entities.csproj" />
   </ItemGroup>
 
 </Project>
