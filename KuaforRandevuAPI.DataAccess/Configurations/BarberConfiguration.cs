@@ -11,7 +11,6 @@ namespace KuaforRandevuAPI.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Barber> builder)
         {
-            builder.HasKey(x => x.Id);
         }
     }
 }

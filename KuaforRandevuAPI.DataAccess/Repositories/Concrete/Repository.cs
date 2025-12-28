@@ -19,7 +19,7 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
         public async Task<List<T>> GetAll()
         {
