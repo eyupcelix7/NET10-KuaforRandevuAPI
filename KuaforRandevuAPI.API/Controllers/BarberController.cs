@@ -26,7 +26,10 @@ namespace KuaforRandevuAPI.API.Controllers
             }
             catch (ValidationException ex)
             {
-                return BadRequest(ex.Errors);
+                return BadRequest(new
+                {
+                    error = ex.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                });
             }
         }
     }

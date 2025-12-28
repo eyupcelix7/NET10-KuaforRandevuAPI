@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Business.Concrete;
+using KuaforRandevuAPI.Business.Mappings.Profiles;
 using KuaforRandevuAPI.Business.ValidationRules.BarberRules;
 using KuaforRandevuAPI.DataAccess.Context;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
@@ -21,6 +22,10 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             services.AddDbContext<BarberContext>(options =>
             {
                 options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=BarberReservationAPI;Integrated Security=True;");
+            });
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<BarberProfile>();
             });
             services.AddScoped<BarberContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Barber;
@@ -14,22 +15,19 @@ namespace KuaforRandevuAPI.Business.Concrete
     {
         private readonly IRepository<Barber> _repository;
         private readonly IValidator<CreateBarberDto> _createBarberValidator;
-        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator)
+        private readonly IMapper _mapper;
+        public BarberService(IRepository<Barber> repository, IValidator<CreateBarberDto> createBarberValidator, IMapper mapper)
         {
             _repository = repository;
             _createBarberValidator = createBarberValidator;
+            _mapper = mapper;
         }
         public void CreateBarber(CreateBarberDto dto)
         {
             var validationResult = _createBarberValidator.Validate(dto);
             if (validationResult.IsValid)
             {
-                _repository.Add(new Barber
-                {
-                    BarberName = dto.BarberName,
-                    JobStartTime = dto.JobStartTime,
-                    JobEndTime = dto.JobEndTime
-                });
+                _repository.Add(_mapper.Map<Barber>(dto));
             }
             else
             {

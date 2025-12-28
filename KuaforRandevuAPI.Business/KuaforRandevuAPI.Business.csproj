@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
   </ItemGroup>
@@ -15,10 +16,6 @@
     <ProjectReference Include="..\KuaforRandevuAPI.Common\KuaforRandevuAPI.Common.csproj" />
     <ProjectReference Include="..\KuaforRandevuAPI.DataAccess\KuaforRandevuAPI.DataAccess.csproj" />
     <ProjectReference Include="..\KuaforRandevuAPI.Dtos\KuaforRandevuAPI.Dtos.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Mappings\Profiles\" />
   </ItemGroup>
 
 </Project>
