@@ -35,18 +35,8 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPost("CreateBarber")]
         public async Task<IActionResult> CreateBarber(CreateBarberDto dto)
         {
-            try
-            {
-                await _service.CreateBarber(dto);
-                return Ok(dto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new
-                {
-                    error = ex.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
-                });
-            }
+           var values = await _service.CreateBarber(dto);
+            return Ok(values);
         }
         [HttpGet("GetBarberByIdWithServices/{id}")]
         public async Task<IActionResult> GetBarberByIdWithServices(int id)
@@ -57,18 +47,8 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPut("UpdateBarber")]
         public async Task<IActionResult> UpdateBarber(UpdateBarberDto dto)
         {
-            try
-            {
-                await _service.UpdateBarber(dto);
-                return Ok(dto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new
-                {
-                    message = ex.Errors.Select(x => x.ErrorMessage).FirstOrDefault()
-                });
-            }
+            var values = await _service.UpdateBarber(dto);
+            return Ok(values);
         }
         [HttpDelete]
         public async Task<IActionResult> RemoveBarber(int id)

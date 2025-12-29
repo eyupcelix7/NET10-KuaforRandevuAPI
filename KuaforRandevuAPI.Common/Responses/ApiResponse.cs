@@ -10,7 +10,7 @@ namespace KuaforRandevuAPI.Common.Responses
         public bool Success { get; set; }
         public string? Message { get; set; }
         public T? Data { get; set; }
-        public List<string>? Errors { get; set; }
+        public Object? Errors { get; set; }
         public static ApiResponse<T> SuccessResponse(T data, string? message = "")
         {
             return new ApiResponse<T>
@@ -21,7 +21,7 @@ namespace KuaforRandevuAPI.Common.Responses
                 Data = data
             };
         }
-        public static ApiResponse<T> ErrorResponse(string? message, List<string>? errors = null,int statusCode = 400)
+        public static ApiResponse<T> ErrorResponse(string? message, Object? errors = null,int statusCode = 400)
         {
             return new ApiResponse<T>
             {
