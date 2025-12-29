@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KuaforRandevuAPI.Common\KuaforRandevuAPI.Common.csproj" />
+    <ProjectReference Include="..\KuaforRandevuAPI.Entities\KuaforRandevuAPI.Entities.csproj" />
   </ItemGroup>
 
 </Project>

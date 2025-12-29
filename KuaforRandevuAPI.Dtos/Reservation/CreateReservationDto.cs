@@ -1,19 +1,16 @@
-﻿using KuaforRandevuAPI.Entities.Abstract;
-using KuaforRandevuAPI.Entities.Enums.Reservation;
+﻿using KuaforRandevuAPI.Entities.Enums.Reservation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace KuaforRandevuAPI.Entities.Concrete
+namespace KuaforRandevuAPI.Dtos.Reservation
 {
-    public class Reservation: IEntity
+    public class CreateReservationDto
     {
-        public int Id { get; set; }
         public string? Name { get; set; }
         public string? PhoneNumber { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
-        public Barber? Barber { get; set; }
         public int BarberId { get; set; }
         public ReservationStatus Status { get; set; }
     }
