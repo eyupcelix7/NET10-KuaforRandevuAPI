@@ -30,10 +30,12 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
                 cfg.AddProfile<BarberProfile>();
                 cfg.AddProfile<ServiceProfile>();
                 cfg.AddProfile<ReservationProfile>();
+                cfg.AddProfile<BarberServiceProfile>();
             });
             // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IBarberRepository), typeof(BarberRepository));
+            services.AddScoped(typeof(IServiceRepository), typeof(ServiceRepository));
             services.AddScoped(typeof(IReservationRepository), typeof(ReservationRepository));
             // Services
             services.AddScoped(typeof(IBarberService), typeof(BarberService));

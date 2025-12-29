@@ -14,7 +14,7 @@ namespace KuaforRandevuAPI.Business.Mappings.Profiles
         {
             CreateMap<Barber, CreateBarberDto>().ReverseMap();
             CreateMap<Barber, ResultBarberDto>().ReverseMap();
-            CreateMap<Barber, ResultBarberDto>();
+            CreateMap<Barber, ResultBarberWithServicesDto>().ReverseMap();
         }
     }
 }

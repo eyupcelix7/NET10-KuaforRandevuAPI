@@ -48,10 +48,10 @@ namespace KuaforRandevuAPI.Business.Concrete
                 throw new ValidationException(validationResult.Errors);
             }
         }
-        public async Task<ResultBarberDto> GetBarberByIdWithServices(int id)
+        public async Task<ResultBarberWithServicesDto> GetBarberByIdWithServices(int id)
         {
             var values = await _barberRepository.GetBarberByIdWithServices(id);
-            return _mapper.Map<ResultBarberDto>(values);
+            return _mapper.Map<ResultBarberWithServicesDto>(values);
         }
         public async Task UpdateBarber(UpdateBarberDto dto)
         {

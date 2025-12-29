@@ -30,6 +30,12 @@ namespace KuaforRandevuAPI.API.Controllers
             var service = await _service.GetServiceById(id);
             return Ok(service);
         }
+        [HttpGet("GetServicesByBarberId/{id}")]
+        public async Task<IActionResult> GetServicesByBarberId(int id)
+        {
+            var values = await _service.GetServicesByBarberId(id);
+            return Ok(values);
+        }
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {

@@ -29,8 +29,8 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
 
         public async Task<Barber?> GetBarberByIdWithServices(int id)
         {
-            //return await _context.Barbers.Include(x => x.Services).Where(y => y.Id == id).FirstOrDefaultAsync();
-            throw new NotImplementedException();
+            var values = await _context.Barbers.Include(x => x.BarberServices).Where(y => y.Id == id).FirstOrDefaultAsync();
+            return values;
         }
 
         public Task<List<Barber?>> GetBarbersWithServices()
