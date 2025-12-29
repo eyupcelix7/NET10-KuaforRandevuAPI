@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
+using KuaforRandevuAPI.Common.Responses;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Barber;
 using KuaforRandevuAPI.Entities.Concrete;
@@ -48,10 +49,11 @@ namespace KuaforRandevuAPI.Business.Concrete
                 throw new ValidationException(validationResult.Errors);
             }
         }
-        public async Task<ResultBarberWithServicesDto> GetBarberByIdWithServices(int id)
+        public async Task<ApiResponse<ResultBarberWithServicesDto>> GetBarberByIdWithServices(int id)
         {
             var values = await _barberRepository.GetBarberByIdWithServices(id);
-            return _mapper.Map<ResultBarberWithServicesDto>(values);
+            var data = _mapper.Map<ResultBarberWithServicesDto>(values);
+            return ApiResponse<ResultBarberWithServicesDto>.SuccessResponse(data,"OK");
         }
         public async Task UpdateBarber(UpdateBarberDto dto)
         {

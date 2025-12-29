@@ -12,6 +12,7 @@ namespace KuaforRandevuAPI.Dtos.Reservation
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
         public int BarberId { get; set; }
+        public int ServiceId { get; set; }
         public ReservationStatus Status { get; set; }
     }
 }

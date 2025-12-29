@@ -13,5 +13,7 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task Create(CreateReservationDto dto);
         Task Update(UpdateReservationDto dto);
         Task Remove(int id);
+
+        Task<bool> CheckReservationAvailabble(CreateReservationDto dto);
     }
 }

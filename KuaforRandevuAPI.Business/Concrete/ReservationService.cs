@@ -13,12 +13,14 @@ namespace KuaforRandevuAPI.Business.Concrete
     {
         private readonly IRepository<Reservation> _repository;
         private readonly IReservationRepository _reservationRepository;
+        private readonly IBarberRepository _barberRepository;
         private readonly IMapper _mapper;
-        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository)
+        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _reservationRepository = reservationRepository;
+            _barberRepository = barberRepository;
         }
         public async Task<List<ResultReservationDto>> GetAllReservations()
         {
@@ -59,6 +61,36 @@ namespace KuaforRandevuAPI.Business.Concrete
             {
                 await _repository.Remove(service);
             }
+        }
+
+        public async Task<bool> CheckReservationAvailabble(CreateReservationDto dto)
+        {
+            var reservationList = await GetAllReservations();
+            foreach (var reservation in reservationList)
+            {
+                if (reservation != null)
+                {
+                    if (reservation.BarberId == dto.BarberId)
+                    {
+                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(reservation.BarberId);
+                        if (reservationBarber != null)
+                        {
+                            // Saat Kontrolü
+                            if (reservationBarber.JobStartTime < dto.Time && reservationBarber.JobEndTime > dto.Time)
+                            {
+                                // Mesai saati kontrolü başarılı.
+                                return true;
+                            }
+                            else
+                            {
+                                // Berberin mesai saati dışında bir istek.
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
