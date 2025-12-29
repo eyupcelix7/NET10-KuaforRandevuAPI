@@ -37,13 +37,15 @@ namespace KuaforRandevuAPI.Business.Concrete
                 throw new ValidationException(validationResult.Errors);
             }
         }
-        public Task<List<ResultServiceDto>> GetAllService()
+        public async Task<List<ResultServiceDto>> GetAllService()
         {
-            throw new NotImplementedException();
+            var services = await _repository.GetAll();
+            return _mapper.Map<List<ResultServiceDto>>(services);
         }
-        public Task<ResultServiceDto> GetServiceById(int id)
+        public async Task<ResultServiceDto> GetServiceById(int id)
         {
-            throw new NotImplementedException();
+            var service = await _repository.GetById(id);
+            return _mapper.Map<ResultServiceDto>(service);
         }
         public async Task UpdateService(UpdateServiceDto dto)
         {

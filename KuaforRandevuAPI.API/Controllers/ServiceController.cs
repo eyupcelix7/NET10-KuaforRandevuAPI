@@ -18,6 +18,18 @@ namespace KuaforRandevuAPI.API.Controllers
             _mapper = mapper;
             _service = service;
         }
+        [HttpGet("GetAllServices")]
+        public async Task<IActionResult> GetAllServices()
+        {
+            var services = await _service.GetAllService();
+            return Ok(services);
+        }
+        [HttpGet("GetServiceById")]
+        public async Task<IActionResult> GetServiceById(int id)
+        {
+            var service = await _service.GetServiceById(id);
+            return Ok(service);
+        }
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
