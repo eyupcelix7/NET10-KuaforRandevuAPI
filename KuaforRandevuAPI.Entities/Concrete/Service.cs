@@ -11,7 +11,7 @@ namespace KuaforRandevuAPI.Entities.Concrete
         public string? ServiceName { get; set; }
         public decimal ServicePrice { get; set; }
         public string? ServiceDuration { get; set; } // Hizmetin Süresi
-        public Barber? Barber { get; set; }
-        public int BarberId { get; set; }
+        public List<Reservation>? Reservations { get; set; }
+        public List<BarberService>? BarberServices { get; set; }
     }
 }

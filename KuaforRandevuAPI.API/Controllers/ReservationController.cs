@@ -20,6 +20,13 @@ namespace KuaforRandevuAPI.API.Controllers
             var reservations = await _reservationService.GetAllReservations();
             return Ok(reservations);
         }
+        [HttpGet("GetReservationsForToday")]
+        public async Task<IActionResult> GetReservationsForToday()
+        {
+            var reservations = await _reservationService.GetReservationForToday();
+            return Ok(reservations);
+        }
+
         [HttpGet("GetReservationById{id}")]
         public async Task<IActionResult> GetReservationById(int id)
         {

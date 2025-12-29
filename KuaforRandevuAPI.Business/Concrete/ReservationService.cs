@@ -12,11 +12,13 @@ namespace KuaforRandevuAPI.Business.Concrete
     public class ReservationService : IReservationService
     {
         private readonly IRepository<Reservation> _repository;
+        private readonly IReservationRepository _reservationRepository;
         private readonly IMapper _mapper;
-        public ReservationService(IRepository<Reservation> repository, IMapper mapper)
+        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _reservationRepository = reservationRepository;
         }
         public async Task<List<ResultReservationDto>> GetAllReservations()
         {
@@ -28,10 +30,10 @@ namespace KuaforRandevuAPI.Business.Concrete
             var reservation = await _repository.GetById(id);
             return _mapper.Map<ResultReservationDto>(reservation);
         }
-        public Task<List<ResultReservationDto>> GetReservationForToday()
+        public async Task<List<ResultReservationDto>> GetReservationForToday()
         {
-            // Özel Repository ile yazılacak.
-            throw new NotImplementedException();
+            var reservations = await _reservationRepository.GetReservationsForToday();
+            return _mapper.Map<List<ResultReservationDto>>(reservations);
         }
         public async Task Create(CreateReservationDto dto)
         {

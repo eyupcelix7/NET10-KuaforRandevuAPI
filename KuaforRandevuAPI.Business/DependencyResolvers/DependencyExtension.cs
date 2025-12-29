@@ -34,6 +34,7 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IBarberRepository), typeof(BarberRepository));
+            services.AddScoped(typeof(IReservationRepository), typeof(ReservationRepository));
             // Services
             services.AddScoped(typeof(IBarberService), typeof(BarberService));
             services.AddScoped(typeof(IServiceService), typeof(ServiceService));

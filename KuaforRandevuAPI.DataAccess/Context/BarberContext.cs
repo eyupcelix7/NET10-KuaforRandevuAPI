@@ -17,6 +17,8 @@ namespace KuaforRandevuAPI.DataAccess.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BarberConfiguration());
+            modelBuilder.ApplyConfiguration(new ReservationConfiguration());
+            modelBuilder.ApplyConfiguration(new BarberServiceConfiguration());
         }
     }
 }
