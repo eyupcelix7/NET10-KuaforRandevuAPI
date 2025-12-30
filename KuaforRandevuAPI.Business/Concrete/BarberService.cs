@@ -66,9 +66,9 @@ namespace KuaforRandevuAPI.Business.Concrete
                 var updatedBarber = await _repository.GetById(dto.Id);
                 if (updatedBarber != null)
                 {
-                    updatedBarber.BarberName = dto.BarberName;
-                    updatedBarber.JobStartTime = dto.JobStartTime;
-                    updatedBarber.JobEndTime = dto.JobEndTime;
+                    updatedBarber.Name = dto.Name;
+                    updatedBarber.StartTime = dto.StartTime;
+                    updatedBarber.EndTime = dto.EndTime;
                     await _repository.Update(updatedBarber);
                     return ApiResponse<UpdateBarberDto>.SuccessResponse(dto, "OK");
                 }

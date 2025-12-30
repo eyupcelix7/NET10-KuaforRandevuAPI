@@ -36,8 +36,15 @@ namespace KuaforRandevuAPI.Business.Concrete
         public async Task<ApiResponse<ResultServiceDto>> GetServiceById(int id)
         {
             var service = await _repository.GetById(id);
-            var data = _mapper.Map<ResultServiceDto>(service);
-            return ApiResponse<ResultServiceDto>.SuccessResponse(data);
+            if(service != null)
+            {
+                var data = _mapper.Map<ResultServiceDto>(service);
+                return ApiResponse<ResultServiceDto>.SuccessResponse(data);
+            }
+            else
+            {
+                return ApiResponse<ResultServiceDto>.ErrorResponse("Not Found", null, 404);
+            }
         }
         public async Task<ApiResponse<List<ResultServiceDto>>> GetServicesByBarberId(int id)
         {
@@ -68,9 +75,9 @@ namespace KuaforRandevuAPI.Business.Concrete
                 var service = await _repository.GetById(dto.Id);
                 if (service != null)
                 {
-                    service.ServiceName = dto.ServiceName;
-                    service.ServicePrice = dto.ServicePrice;
-                    service.ServiceDuration = dto.ServiceDuration;
+                    service.Name = dto.Name;
+                    service.Price = dto.Price;
+                    service.Duration = dto.Duration;
                     await _repository.Update(service);
                     return ApiResponse<UpdateServiceDto>.SuccessResponse(dto, "OK");
                 }

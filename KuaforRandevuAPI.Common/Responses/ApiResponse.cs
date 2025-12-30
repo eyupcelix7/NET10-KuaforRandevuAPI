@@ -6,7 +6,7 @@ namespace KuaforRandevuAPI.Common.Responses
 {
     public class ApiResponse<T>
     {
-        public int StatusCode { get; set; }
+        public int Status { get; set; }
         public bool Success { get; set; }
         public string? Message { get; set; }
         public T? Data { get; set; }
@@ -15,17 +15,17 @@ namespace KuaforRandevuAPI.Common.Responses
         {
             return new ApiResponse<T>
             {
-                StatusCode = 200,
+                Status = 200,
                 Success = true,
                 Message = message,
                 Data = data
             };
         }
-        public static ApiResponse<T> ErrorResponse(string? message, Object? errors = null,int statusCode = 400)
+        public static ApiResponse<T> ErrorResponse(string? message, Object? errors = null,int status = 400)
         {
             return new ApiResponse<T>
             {
-                StatusCode = statusCode,
+                Status = status,
                 Success = false,
                 Message = message,
                 Errors = errors

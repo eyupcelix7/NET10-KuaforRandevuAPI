@@ -13,10 +13,10 @@ namespace KuaforRandevuAPI.Entities.Concrete
         public string? PhoneNumber { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
-        public Barber? Barber { get; set; }
-        public int BarberId { get; set; }
-        public Service? Service { get; set; }
         public int ServiceId { get; set; }
+        public Service? Service { get; set; }
+        public int BarberId { get; set; }
+        public Barber? Barber { get; set; }
         public ReservationStatus Status { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace KuaforRandevuAPI.Business.Concrete
@@ -39,7 +40,18 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task Create(CreateReservationDto dto)
         {
-            await _repository.Add(_mapper.Map<Reservation>(dto));
+            bool checkReservationAvailable = await CheckReservationAvailabble(dto);
+            if (true)
+            {
+                var available = await GetAvailableReservation(dto.BarberId, dto.Date);
+                if (available != null)
+                {
+                    //await _repository.Add(_mapper.Map<Reservation>(dto));
+                }
+            }
+            else
+            {
+            }
         }
         public async Task Update(UpdateReservationDto dto)
         {
@@ -62,7 +74,6 @@ namespace KuaforRandevuAPI.Business.Concrete
                 await _repository.Remove(service);
             }
         }
-
         public async Task<bool> CheckReservationAvailabble(CreateReservationDto dto)
         {
             var reservationList = await GetAllReservations();
@@ -72,11 +83,11 @@ namespace KuaforRandevuAPI.Business.Concrete
                 {
                     if (reservation.BarberId == dto.BarberId)
                     {
-                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(reservation.BarberId);
+                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(3);
                         if (reservationBarber != null)
                         {
                             // Saat Kontrolü
-                            if (reservationBarber.JobStartTime < dto.Time && reservationBarber.JobEndTime > dto.Time)
+                            if (reservationBarber.StartTime < dto.Time && reservationBarber.EndTime > dto.Time)
                             {
                                 // Mesai saati kontrolü başarılı.
                                 return true;
@@ -91,6 +102,41 @@ namespace KuaforRandevuAPI.Business.Concrete
                 }
             }
             return false;
+        }
+        public async Task<string> GetAvailableReservation(int barberId, DateOnly minDate)
+        {
+            if (barberId != 0)
+            {
+                Barber? barber = await _barberRepository.GetBarberByIdWithServices(barberId);
+                if (barber != null)
+                {
+                    var reservations = await _reservationRepository.GetReservationsForToday();
+
+                    TimeOnly jobStartTime = barber.StartTime; // Mesai başlangıç saati
+                    TimeOnly jobEndTime = barber.EndTime; // Mesai bitiş saati
+                    TimeSpan totalWorkTimeSpan = jobEndTime - jobStartTime; // Kaç saat çalışıyor bu berber?
+                    TimeOnly currentHour = jobStartTime;
+                    int foundReservation = 0;
+                    int totalWorkHours = Convert.ToInt32(totalWorkTimeSpan.TotalHours);
+                    Dictionary<int, string> findingReservations = new Dictionary<int, string>(); // Testing
+
+                    /* 
+                     * 2 ile çarpmamızın sebebi hem o güne hemde o günden bir sonraki güne bakması içindir
+                     * mesela bir berberin mesai saati 7 saat ise sonraki güne de bakacağı için 14 kez dönmesi gerekir döngünün.
+                     * 
+                     * 
+                     * 20:00 + 40 = 20:40
+                     * 20:35
+                    */
+
+                    // Günlük Döngüsü
+                    for (int i = 1; i <= totalWorkHours; i++)
+                    {
+
+                    }
+                }
+            }
+            return "Selamun Aleyküm";
         }
     }
 }

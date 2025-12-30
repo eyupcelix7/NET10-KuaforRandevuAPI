@@ -19,11 +19,11 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         {
             if(barberId == null)
             {
-                return _context.Barbers.Any(x=> x.BarberName!.Equals(barberName));
+                return _context.Barbers.Any(x=> x.Name!.Equals(barberName));
             }
             else
             {
-                return _context.Barbers.Any(x => x.BarberName!.Equals(barberName) && x.Id != barberId);
+                return _context.Barbers.Any(x => x.Name!.Equals(barberName) && x.Id != barberId);
             }
         }
 

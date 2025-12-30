@@ -15,5 +15,6 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task Remove(int id);
 
         Task<bool> CheckReservationAvailabble(CreateReservationDto dto);
+        Task<string> GetAvailableReservation(int barberId, DateOnly minDate);
     }
 }

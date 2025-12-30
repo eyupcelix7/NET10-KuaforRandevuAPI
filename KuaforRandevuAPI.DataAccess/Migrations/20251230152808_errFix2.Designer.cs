@@ -4,6 +4,7 @@ using KuaforRandevuAPI.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KuaforRandevuAPI.DataAccess.Migrations
 {
     [DbContext(typeof(BarberContext))]
-    partial class BarberContextModelSnapshot : ModelSnapshot
+    [Migration("20251230152808_errFix2")]
+    partial class errFix2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,13 +33,13 @@ namespace KuaforRandevuAPI.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("BarberName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("StartTime")
+                    b.Property<TimeOnly>("JobEndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("JobStartTime")
                         .HasColumnType("time");
 
                     b.HasKey("Id");
@@ -108,13 +111,13 @@ namespace KuaforRandevuAPI.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Duration")
+                    b.Property<string>("ServiceDuration")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("ServiceName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("ServicePrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");

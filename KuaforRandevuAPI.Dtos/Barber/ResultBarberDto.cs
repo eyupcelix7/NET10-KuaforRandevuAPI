@@ -8,8 +8,8 @@ namespace KuaforRandevuAPI.Dtos.Barber
     public class ResultBarberDto
     {
         public int Id { get; set; }
-        public string? BarberName { get; set; }
-        public TimeOnly JobStartTime { get; set; }
-        public TimeOnly JobEndTime { get; set; }
+        public string? Name { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
     }
 }

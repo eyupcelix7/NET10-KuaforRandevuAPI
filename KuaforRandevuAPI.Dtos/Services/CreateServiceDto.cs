@@ -7,9 +7,9 @@ namespace KuaforRandevuAPI.Dtos.Services
 {
     public class CreateServiceDto
     {
-        public string? ServiceName { get; set; }
-        public decimal ServicePrice { get; set; }
-        public string? ServiceDuration { get; set; }
+        public string? Name { get; set; }
+        public decimal Price { get; set; }
+        public string? Duration { get; set; }
         public int BarberId { get; set; }
     }
 }

@@ -12,13 +12,13 @@ namespace KuaforRandevuAPI.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Reservation> builder)
         {
             builder
-                .HasOne(x => x.Barber)
-                .WithMany(y => y.Reservations)
-                .HasForeignKey(z => z.BarberId);
-            builder
                 .HasOne(x => x.Service)
                 .WithMany(y => y.Reservations)
                 .HasForeignKey(z => z.ServiceId);
+            builder
+                .HasOne(x => x.Barber)
+                .WithMany(y => y.Reservations)
+                .HasForeignKey(z => z.BarberId);
         }
     }
 }

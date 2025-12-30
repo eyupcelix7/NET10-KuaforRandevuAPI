@@ -17,7 +17,12 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         }
         public async Task<List<Reservation>> GetReservationsForToday()
         {
-            return await _context.Reservations.Where(x=> x.Date == DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            return await _context.Reservations
+                .Include(r => r.Service)
+                .Include(x => x.Barber)
+                .Where(r => r.Date == today)
+                .ToListAsync();
         }
     }
 }
