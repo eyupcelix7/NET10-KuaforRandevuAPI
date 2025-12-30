@@ -2,6 +2,7 @@
 using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Business.ValidationRules.ServiceRules;
+using KuaforRandevuAPI.Common.Responses;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Services;
 using KuaforRandevuAPI.Entities.Concrete;
@@ -26,35 +27,40 @@ namespace KuaforRandevuAPI.Business.Concrete
             _updateServiceValidator = updateServiceValidator;
             _serviceRepository = serviceRepository;
         }
-        public async Task<List<ResultServiceDto>> GetAllService()
+        public async Task<ApiResponse<List<ResultServiceDto>>> GetAllService() 
         {
             var services = await _repository.GetAll();
-            return _mapper.Map<List<ResultServiceDto>>(services);
+            var data = _mapper.Map<List<ResultServiceDto>>(services);
+            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data);
         }
-        public async Task<ResultServiceDto> GetServiceById(int id)
+        public async Task<ApiResponse<ResultServiceDto>> GetServiceById(int id)
         {
             var service = await _repository.GetById(id);
-            return _mapper.Map<ResultServiceDto>(service);
+            var data = _mapper.Map<ResultServiceDto>(service);
+            return ApiResponse<ResultServiceDto>.SuccessResponse(data);
         }
-        public async Task<List<ResultServiceDto>> GetServicesByBarberId(int id)
+        public async Task<ApiResponse<List<ResultServiceDto>>> GetServicesByBarberId(int id)
         {
             var values = await _serviceRepository.GetServicesByBarberId(id);
-            return _mapper.Map<List<ResultServiceDto>>(values);
+            var data = _mapper.Map<List<ResultServiceDto>>(values);
+            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data);
         }
-        public async Task CreateService(CreateServiceDto dto)
+        public async Task<ApiResponse<CreateServiceDto>> CreateService(CreateServiceDto dto)
         {
             var validationResult = _createServiceValidator.Validate(dto);
 
             if (validationResult.IsValid)
             {
-                await _repository.Add(_mapper.Map<Service>(dto));
+                var data = _mapper.Map<Service>(dto);
+                await _repository.Add(data);
+                return ApiResponse<CreateServiceDto>.SuccessResponse(dto, "OK");
             }
             else
             {
-                throw new ValidationException(validationResult.Errors);
+                return ApiResponse<CreateServiceDto>.ErrorResponse("Validation Error",validationResult.Errors.Select(x=> x.ErrorMessage));
             }
         }
-        public async Task UpdateService(UpdateServiceDto dto)
+        public async Task<ApiResponse<UpdateServiceDto>> UpdateService(UpdateServiceDto dto)
         {
             var validationResult = _updateServiceValidator.Validate(dto);
             if (validationResult.IsValid)
@@ -66,20 +72,24 @@ namespace KuaforRandevuAPI.Business.Concrete
                     service.ServicePrice = dto.ServicePrice;
                     service.ServiceDuration = dto.ServiceDuration;
                     await _repository.Update(service);
+                    return ApiResponse<UpdateServiceDto>.SuccessResponse(dto, "OK");
                 }
+                return ApiResponse<UpdateServiceDto>.ErrorResponse("Not Found", null ,404);
             }
             else
             {
-                throw new ValidationException(validationResult.Errors);
+                return ApiResponse<UpdateServiceDto>.ErrorResponse("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage));
             }
         }
-        public async Task RemoveService(int id)
+        public async Task<ApiResponse<int>> RemoveService(int id)
         {
             var service = await _repository.GetById(id);
             if(service != null)
             {
                 await _repository.Remove(service);
+                return ApiResponse<int>.SuccessResponse(id,"OK");
             }
+            return ApiResponse<int>.ErrorResponse("Not Found", null, 404);
         }
     }
 }

@@ -22,58 +22,38 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpGet("GetAllServices")]
         public async Task<IActionResult> GetAllServices()
         {
-            var services = await _service.GetAllService();
-            return Ok(services);
+            var result = await _service.GetAllService();
+            return Ok(result);
         }
         [HttpGet("GetServiceById")]
         public async Task<IActionResult> GetServiceById(int id)
         {
-            var service = await _service.GetServiceById(id);
-            return Ok(service);
+            var result = await _service.GetServiceById(id);
+            return Ok(result);
         }
         [HttpGet("GetServicesByBarberId/{id}")]
         public async Task<IActionResult> GetServicesByBarberId(int id)
         {
-            var values = await _service.GetServicesByBarberId(id);
-            return Ok(values);
+            var result = await _service.GetServicesByBarberId(id);
+            return Ok(result);
         }
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
-            try
-            {
-                await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
-                return Ok(dto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new
-                {
-                    message = ex.Errors.Select(x => x.ErrorMessage).FirstOrDefault()
-                });
-            }
+            var result = await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
+            return Ok(result);
         }
         [HttpPut("UpdateService")]
         public async Task<IActionResult> UpdateService(UpdateServiceDto dto)
         {
-            try
-            {
-                await _service.UpdateService(dto);
-                return Ok(dto);
-            }
-            catch (ValidationException ex)
-            {
-                return BadRequest(new
-                {
-                    message = ex.Errors.Select(x => x.ErrorMessage).FirstOrDefault()
-                });
-            }
+            var result = await _service.UpdateService(dto);
+            return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> RemoveService(int id)
         {
-            await _service.RemoveService(id);
-            return Ok("Silme işlemi başarılı");
+            var result = await _service.RemoveService(id);
+            return Ok(result);
         }
     }
 }
