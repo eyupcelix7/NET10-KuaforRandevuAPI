@@ -9,7 +9,7 @@ namespace KuaforRandevuAPI.Dtos.Services
     {
         public string? Name { get; set; }
         public decimal Price { get; set; }
-        public string? Duration { get; set; }
+        public TimeSpan? Duration { get; set; }
         public int BarberId { get; set; }
     }
 }

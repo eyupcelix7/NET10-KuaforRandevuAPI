@@ -3,6 +3,7 @@ using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Entities.Concrete;
+using KuaforRandevuAPI.Entities.Enums.Reservation;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,14 +15,16 @@ namespace KuaforRandevuAPI.Business.Concrete
     {
         private readonly IRepository<Reservation> _repository;
         private readonly IReservationRepository _reservationRepository;
+        private readonly IServiceRepository _serviceRepository;
         private readonly IBarberRepository _barberRepository;
         private readonly IMapper _mapper;
-        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository)
+        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository, IServiceRepository serviceRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _reservationRepository = reservationRepository;
             _barberRepository = barberRepository;
+            _serviceRepository = serviceRepository;
         }
         public async Task<List<ResultReservationDto>> GetAllReservations()
         {
@@ -38,15 +41,29 @@ namespace KuaforRandevuAPI.Business.Concrete
             var reservations = await _reservationRepository.GetReservationsForToday();
             return _mapper.Map<List<ResultReservationDto>>(reservations);
         }
+        public async Task<List<ResultReservationDto>> GetReservationByBarberId(ReservationStatus status, int barberId)
+        {
+            var reservations = await _reservationRepository.GetReservationsByBarberId(status, barberId);
+            return _mapper.Map<List<ResultReservationDto>>(reservations);
+        }
         public async Task Create(CreateReservationDto dto)
         {
-            bool checkReservationAvailable = await CheckReservationAvailabble(dto);
-            if (true)
+            bool hourAvailable = await CheckHourAvailable(dto); // Mesai saatleri kontrolü
+            if (hourAvailable)
             {
-                var available = await GetAvailableReservation(dto.BarberId, dto.Date);
-                if (available != null)
+                var reservationAvailable = await CheckReservationAvailable(dto);
+
+                if (reservationAvailable)
                 {
                     //await _repository.Add(_mapper.Map<Reservation>(dto));
+                }
+                else
+                {
+                    var suggestions = await GetReservationSuggestions(dto);
+                    foreach (var item in suggestions)
+                    {
+                        Console.WriteLine(item);
+                    }
                 }
             }
             else
@@ -74,7 +91,7 @@ namespace KuaforRandevuAPI.Business.Concrete
                 await _repository.Remove(service);
             }
         }
-        public async Task<bool> CheckReservationAvailabble(CreateReservationDto dto)
+        public async Task<bool> CheckHourAvailable(CreateReservationDto dto)
         {
             var reservationList = await GetAllReservations();
             foreach (var reservation in reservationList)
@@ -83,7 +100,7 @@ namespace KuaforRandevuAPI.Business.Concrete
                 {
                     if (reservation.BarberId == dto.BarberId)
                     {
-                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(3);
+                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(dto.BarberId);
                         if (reservationBarber != null)
                         {
                             // Saat Kontrolü
@@ -103,63 +120,104 @@ namespace KuaforRandevuAPI.Business.Concrete
             }
             return false;
         }
-        public async Task<string> GetAvailableReservation(int barberId, DateOnly minDate)
+        public async Task<bool> CheckReservationAvailable(CreateReservationDto dto)
         {
-            if (barberId != 0)
+            var reservations = await _reservationRepository.GetReservationsByBarberId(ReservationStatus.Pending,dto.BarberId);
+            var services = await _serviceRepository.GetServicesByBarberId(dto.BarberId);
+            var selectedService = services.Where(x => x.Id == dto.ServiceId).FirstOrDefault(); // Seçilen hizmetin süresine erişmek için !
+
+            var reservationsForDate = reservations.Where(x=> x.Date == dto.Date);
+
+            var isAvailable = !reservationsForDate.Any(y =>
             {
-                Barber? barber = await _barberRepository.GetBarberByIdWithServices(barberId);
+                var reservationStartTime = y.Time;
+                var reservationEndTime = y.Time.AddMinutes(y.Service!.Duration!.Value.Minutes);
+                var newReservationStartTime = dto.Time;
+                var newReservationEndTime = dto.Time.AddMinutes(selectedService!.Duration!.Value.Minutes);
+                return newReservationStartTime <= reservationEndTime &&
+                reservationStartTime <= newReservationEndTime;
+            });
+
+            if (isAvailable)
+                return true;
+            else
+                return false;
+        }
+        public async Task<List<string>> GetReservationSuggestions(CreateReservationDto dto)
+        {
+            if (dto.BarberId != 0)
+            {
+                Barber? barber = await _barberRepository.GetBarberByIdWithServices(dto.BarberId);
                 if (barber != null)
                 {
-                    var reservations = await _reservationRepository.GetReservationsForToday();
-
+                    var reservationList = await _reservationRepository.GetReservationsByBarberId(ReservationStatus.Pending, dto.BarberId);
                     TimeOnly jobStartTime = barber.StartTime; // Mesai başlangıç saati
                     TimeOnly jobEndTime = barber.EndTime; // Mesai bitiş saati
                     TimeSpan totalWorkTimeSpan = jobEndTime - jobStartTime; // Kaç saat çalışıyor bu berber?
-
                     TimeOnly currentHour = jobStartTime;
-                    int foundReservation = 0;
-                    int totalWorkHours = Convert.ToInt32(totalWorkTimeSpan.TotalHours);
-                    Dictionary<int, string> findingReservations = new Dictionary<int, string>(); // Testing
 
                     List<string> doluSaatler = new List<string>();
                     List<string> bulunanSaatler = new List<string>();
 
-                    /* 
-                     * 2 ile çarpmamızın sebebi hem o güne hemde o günden bir sonraki güne bakması içindir
-                     * mesela bir berberin mesai saati 7 saat ise sonraki güne de bakacağı için 14 kez dönmesi gerekir döngünün.
-                     * 
-                     * 
-                     * 20:00 + 40 = 20:40
-                     * 20:35
-                    */
+                    var services = await _serviceRepository.GetServicesByBarberId(dto.BarberId);
+                    var selectedService = services.Where(x => x.Id == dto.ServiceId).FirstOrDefault(); // Seçilen hizmetin süresine erişmek için !
 
-                    // Günlük Döngüsü
-                    int j = 0;
-                    for (int i = 1; i <= totalWorkHours; i++)
-                    {
-                        if (currentHour >= jobEndTime)
-                        {
-                            break;
-                        }
+                    var reservations = reservationList.Where(x => x.Date == DateOnly.FromDateTime(DateTime.Today));
 
-                        if (!reservations.Any(x => x.Time == currentHour))
-                        {
-                            findingReservations.Add(i, currentHour.ToString());
-                            bulunanSaatler.Add(currentHour.ToString());
-                        }
-                        else
-                        {
-                            doluSaatler.Add(currentHour.ToString());
-                        }
-                        currentHour = currentHour.AddHours(1);
-                    }
-                    foreach (var item in findingReservations)
+                    /*
+                     * Eğer ki müşterinin istediği saat doluysa 10 adet öneri sunacak.
+                     * Öneriler gelirken dinamik olarak gün atlıyor. (31.12 tarihinde boş rezervasyon yoksa 01.01 tarihine geçiyor ve boş rezervasyon bulana kadar devam ediyor)
+                     */
+
+                    int i = 0;
+                    int foundReservation = 0;
+                    while (foundReservation < 10)
                     {
-                        Console.WriteLine(item.Value);
+                        currentHour = jobStartTime; // Değişecek olduğu için tekrar atandı
+
+                        reservations = reservationList.Where(x => x.Date == DateOnly.FromDateTime(DateTime.Today.AddDays(i))); //
+                        
+                        var date = DateTime.Today.AddDays(i);
+
+                        while (currentHour <= jobEndTime && foundReservation < 10) // Bakılan saat mesai saati içindeyse ve bulunan öneri 10 dan az ise.
+                        {
+                            if (currentHour >= jobEndTime) // Mesai saati dışına çıkılmışsa çık
+                                break;
+
+                            if (currentHour == jobStartTime)
+                                currentHour = currentHour.AddMinutes(15); // Adam işe başladığı gibi müşteri almasın 15 dakika sonraya ilk randevu alınabilsin.
+
+                            if (currentHour == jobEndTime)
+                                currentHour = currentHour.AddMinutes(-30); // Adam mesaisi bittiği zaman randevu alamasın 30 dakika önceye son randevu alınabilsin
+
+                            var isAvailable = !reservations.Any(y =>
+                            {
+                                var reservationStartTime = y.Time;
+                                var reservationEndTime = y.Time.AddMinutes(y.Service!.Duration!.Value.Minutes);
+                                var newReservationStartTime = currentHour;
+                                var newReservationEndTime = currentHour.AddMinutes(selectedService!.Duration!.Value.Minutes);
+                                return newReservationStartTime <= reservationEndTime &&
+                                reservationStartTime <= newReservationEndTime;
+                            });
+                            if (isAvailable)
+                            {
+                                // ÖNERİ
+                                bulunanSaatler.Add($"{date.ToString("dd/mm/yyyy")} - {currentHour.ToString()}");
+                                foundReservation++;
+                            }
+                            else
+                            {
+                                // DOLU
+                                doluSaatler.Add(currentHour.ToString());
+                            }
+                            currentHour = currentHour.AddMinutes(15);
+                        }
+                        i++;
                     }
+                    return bulunanSaatler;
                 }
             }
-            return "Selamun Aleyküm";
+            return new List<string>();
         }
     }
 }
