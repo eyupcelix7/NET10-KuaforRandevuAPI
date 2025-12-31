@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Common.Responses;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
@@ -19,13 +20,17 @@ namespace KuaforRandevuAPI.Business.Concrete
         private readonly IServiceRepository _serviceRepository;
         private readonly IBarberRepository _barberRepository;
         private readonly IMapper _mapper;
-        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository, IServiceRepository serviceRepository)
+        private readonly IValidator<CreateReservationDto> _createReservationValidator;
+        private readonly IValidator<UpdateReservationDto> _updateReservationValidator;
+        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository, IServiceRepository serviceRepository, IValidator<CreateReservationDto> createReservationValidator, IValidator<UpdateReservationDto> updateReservationValidator)
         {
             _repository = repository;
             _mapper = mapper;
             _reservationRepository = reservationRepository;
             _barberRepository = barberRepository;
             _serviceRepository = serviceRepository;
+            _createReservationValidator = createReservationValidator;
+            _updateReservationValidator = updateReservationValidator;
         }
         public async Task<ApiResponse<List<ResultReservationDto>>> GetAllReservations()
         {
@@ -53,35 +58,8 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<ApiResponse<CreateReservationDto>> Create(CreateReservationDto dto)
         {
-            bool hourAvailable = await CheckHourAvailable(_mapper.Map<ResultReservationDto>(dto)); // Mesai saatleri kontrolü
-            if (hourAvailable)
-            {
-                // Mesai saatleri içinde.
-                var reservationAvailable = await CheckReservationAvailable(_mapper.Map<ResultReservationDto>(dto));
-
-                if (reservationAvailable)
-                {
-                    // Rezervasyon şartları uygun.
-                    await _repository.Add(_mapper.Map<Reservation>(dto));
-                    return ApiResponse<CreateReservationDto>.SuccessResponse(dto, "OK");
-                }
-                else
-                {
-                    // Rezervasyon saati dolu, önerileri getir.
-                    var suggestions = await GetReservationSuggestions(_mapper.Map<ResultReservationDto>(dto));
-                    return ApiResponse<CreateReservationDto>.ErrorResponse("Rezervasyon Saati Dolu, 10 Adet Öneri", suggestions, 400);
-                }
-            }
-            else
-            {
-                // Mesai saatleri dışında!
-                return ApiResponse<CreateReservationDto>.ErrorResponse("Mesai Saatleri Dışında!");
-            }
-        }
-        public async Task<ApiResponse<UpdateReservationDto>> Update(UpdateReservationDto dto)
-        {
-            var updatedReservation = await _repository.GetById(dto.Id);
-            if(updatedReservation != null)
+            var validationResult = _createReservationValidator.Validate(dto);
+            if (validationResult.IsValid)
             {
                 bool hourAvailable = await CheckHourAvailable(_mapper.Map<ResultReservationDto>(dto)); // Mesai saatleri kontrolü
                 if (hourAvailable)
@@ -92,30 +70,74 @@ namespace KuaforRandevuAPI.Business.Concrete
                     if (reservationAvailable)
                     {
                         // Rezervasyon şartları uygun.
-                        updatedReservation.Name = dto.Name;
-                        updatedReservation.Status = dto.Status;
-                        updatedReservation.PhoneNumber = dto.PhoneNumber;
-                        updatedReservation.BarberId = dto.BarberId;
-                        updatedReservation.Date = dto.Date;
-                        await _repository.Update(updatedReservation);
-                        return ApiResponse<UpdateReservationDto>.SuccessResponse(dto, "OK");
+                        await _repository.Add(_mapper.Map<Reservation>(dto));
+                        return ApiResponse<CreateReservationDto>.SuccessResponse(dto, "OK");
                     }
                     else
                     {
                         // Rezervasyon saati dolu, önerileri getir.
                         var suggestions = await GetReservationSuggestions(_mapper.Map<ResultReservationDto>(dto));
-                        return ApiResponse<UpdateReservationDto>.ErrorResponse("Rezervasyon Saati Dolu, 10 Adet Öneri", suggestions, 400);
+                        return ApiResponse<CreateReservationDto>.ErrorResponse("Rezervasyon Saati Dolu, 10 Adet Öneri", suggestions, 400);
                     }
                 }
                 else
                 {
-                    return ApiResponse<UpdateReservationDto>.ErrorResponse("Mesai Saatleri Dışında!");
+                    // Mesai saatleri dışında!
+                    return ApiResponse<CreateReservationDto>.ErrorResponse("Mesai Saatleri Dışında!");
+                }
+
+            }
+            else
+            {
+                return ApiResponse<CreateReservationDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
+            }
+        }
+        public async Task<ApiResponse<UpdateReservationDto>> Update(UpdateReservationDto dto)
+        {
+            var validationResult = _updateReservationValidator.Validate(dto);
+            if (validationResult.IsValid)
+            {
+                var updatedReservation = await _repository.GetById(dto.Id);
+                if (updatedReservation != null)
+                {
+                    bool hourAvailable = await CheckHourAvailable(_mapper.Map<ResultReservationDto>(dto)); // Mesai saatleri kontrolü
+                    if (hourAvailable)
+                    {
+                        // Mesai saatleri içinde.
+                        var reservationAvailable = await CheckReservationAvailable(_mapper.Map<ResultReservationDto>(dto));
+
+                        if (reservationAvailable)
+                        {
+                            // Rezervasyon şartları uygun.
+                            updatedReservation.Name = dto.Name;
+                            updatedReservation.Status = dto.Status;
+                            updatedReservation.PhoneNumber = dto.PhoneNumber;
+                            updatedReservation.BarberId = dto.BarberId;
+                            updatedReservation.Date = dto.Date;
+                            await _repository.Update(updatedReservation);
+                            return ApiResponse<UpdateReservationDto>.SuccessResponse(dto, "OK");
+                        }
+                        else
+                        {
+                            // Rezervasyon saati dolu, önerileri getir.
+                            var suggestions = await GetReservationSuggestions(_mapper.Map<ResultReservationDto>(dto));
+                            return ApiResponse<UpdateReservationDto>.ErrorResponse("Rezervasyon Saati Dolu, 10 Adet Öneri", suggestions, 400);
+                        }
+                    }
+                    else
+                    {
+                        return ApiResponse<UpdateReservationDto>.ErrorResponse("Mesai Saatleri Dışında!");
+                    }
+                }
+                else
+                {
+                    // Güncellenecek Rezervasyon NULL!
+                    return ApiResponse<UpdateReservationDto>.ErrorResponse("Not Found", null, 404);
                 }
             }
             else
             {
-                // Güncellenecek Rezervasyon NULL!
-                return ApiResponse<UpdateReservationDto>.ErrorResponse("Not Found", null, 404);
+                return ApiResponse<UpdateReservationDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
             }
         }
         public async Task<ApiResponse<int>> Remove(int id)
@@ -155,13 +177,13 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<bool> CheckReservationAvailable(ResultReservationDto dto)
         {
-            var reservations = await _reservationRepository.GetReservationsByBarberId(ReservationStatus.Pending,dto.BarberId);
+            var reservations = await _reservationRepository.GetReservationsByBarberId(ReservationStatus.Pending, dto.BarberId);
             var services = await _serviceRepository.GetServicesByBarberId(dto.BarberId);
             var selectedService = services.Where(x => x.Id == dto.ServiceId).FirstOrDefault(); // Seçilen hizmetin süresine erişmek için !
 
             var reservationsForDate = reservations.Where(x => x.Date == dto.Date);
 
-            if(dto.Id != 0)
+            if (dto.Id != 0)
             {
                 // Id 0 değilse güncelleme işlemidir.
                 return true;
@@ -215,7 +237,7 @@ namespace KuaforRandevuAPI.Business.Concrete
                         currentHour = jobStartTime; // Değişecek olduğu için tekrar atandı
 
                         reservations = reservationList.Where(x => x.Date == DateOnly.FromDateTime(DateTime.Today.AddDays(i))); //
-                        
+
                         var date = DateTime.Today.AddDays(i);
 
                         while (currentHour <= jobEndTime && foundReservation < 10) // Bakılan saat mesai saati içindeyse ve bulunan öneri 10 dan az ise.

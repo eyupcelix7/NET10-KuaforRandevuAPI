@@ -3,11 +3,13 @@ using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Business.Concrete;
 using KuaforRandevuAPI.Business.Mappings.Profiles;
 using KuaforRandevuAPI.Business.ValidationRules.BarberRules;
+using KuaforRandevuAPI.Business.ValidationRules.ReservationRules;
 using KuaforRandevuAPI.Business.ValidationRules.ServiceRules;
 using KuaforRandevuAPI.DataAccess.Context;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.DataAccess.Repositories.Concrete;
 using KuaforRandevuAPI.Dtos.Barber;
+using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Dtos.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,11 +44,16 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             services.AddScoped(typeof(IServiceService), typeof(ServiceService));
             services.AddScoped(typeof(IReservationService), typeof(ReservationService));
 
+            // Fluent Validation
+            // Barbers
             services.AddTransient<IValidator<CreateBarberDto>, CreateBarberValidator>();
             services.AddTransient<IValidator<UpdateBarberDto>, UpdateBarberValidator>();
-            
+            // Services
             services.AddTransient<IValidator<CreateServiceDto>, CreateServiceValidator>();
             services.AddTransient<IValidator<UpdateServiceDto>, UpdateServiceValidator>();
+            // Reservations
+            services.AddTransient<IValidator<CreateReservationDto>, CreateReservationValidator>();
+            services.AddTransient<IValidator<UpdateReservationDto>, UpdateReservationValidator>();
         }
     }
 }
