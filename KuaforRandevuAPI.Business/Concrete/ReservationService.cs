@@ -115,10 +115,14 @@ namespace KuaforRandevuAPI.Business.Concrete
                     TimeOnly jobStartTime = barber.StartTime; // Mesai başlangıç saati
                     TimeOnly jobEndTime = barber.EndTime; // Mesai bitiş saati
                     TimeSpan totalWorkTimeSpan = jobEndTime - jobStartTime; // Kaç saat çalışıyor bu berber?
+
                     TimeOnly currentHour = jobStartTime;
                     int foundReservation = 0;
                     int totalWorkHours = Convert.ToInt32(totalWorkTimeSpan.TotalHours);
                     Dictionary<int, string> findingReservations = new Dictionary<int, string>(); // Testing
+
+                    List<string> doluSaatler = new List<string>();
+                    List<string> bulunanSaatler = new List<string>();
 
                     /* 
                      * 2 ile çarpmamızın sebebi hem o güne hemde o günden bir sonraki güne bakması içindir
@@ -130,9 +134,28 @@ namespace KuaforRandevuAPI.Business.Concrete
                     */
 
                     // Günlük Döngüsü
+                    int j = 0;
                     for (int i = 1; i <= totalWorkHours; i++)
                     {
+                        if (currentHour >= jobEndTime)
+                        {
+                            break;
+                        }
 
+                        if (!reservations.Any(x => x.Time == currentHour))
+                        {
+                            findingReservations.Add(i, currentHour.ToString());
+                            bulunanSaatler.Add(currentHour.ToString());
+                        }
+                        else
+                        {
+                            doluSaatler.Add(currentHour.ToString());
+                        }
+                        currentHour = currentHour.AddHours(1);
+                    }
+                    foreach (var item in findingReservations)
+                    {
+                        Console.WriteLine(item.Value);
                     }
                 }
             }
