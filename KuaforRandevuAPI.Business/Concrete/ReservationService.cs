@@ -51,14 +51,17 @@ namespace KuaforRandevuAPI.Business.Concrete
             bool hourAvailable = await CheckHourAvailable(dto); // Mesai saatleri kontrolü
             if (hourAvailable)
             {
+                // Mesai saatleri içinde.
                 var reservationAvailable = await CheckReservationAvailable(dto);
 
                 if (reservationAvailable)
                 {
-                    //await _repository.Add(_mapper.Map<Reservation>(dto));
+                    // Rezervasyon şartları uygun.
+                    await _repository.Add(_mapper.Map<Reservation>(dto));
                 }
                 else
                 {
+                    // Rezervasyon saati dolu, önerileri getir.
                     var suggestions = await GetReservationSuggestions(dto);
                     foreach (var item in suggestions)
                     {
@@ -68,6 +71,7 @@ namespace KuaforRandevuAPI.Business.Concrete
             }
             else
             {
+                // Mesai saatleri dışında!
             }
         }
         public async Task Update(UpdateReservationDto dto)
@@ -93,31 +97,24 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<bool> CheckHourAvailable(CreateReservationDto dto)
         {
-            var reservationList = await GetAllReservations();
-            foreach (var reservation in reservationList)
+
+            var barber = await _barberRepository.GetBarberByIdWithServices(dto.BarberId);
+
+            if (barber != null)
             {
-                if (reservation != null)
+                // Saat Kontrolü
+                if (barber.StartTime < dto.Time && barber.EndTime > dto.Time)
                 {
-                    if (reservation.BarberId == dto.BarberId)
-                    {
-                        var reservationBarber = await _barberRepository.GetBarberByIdWithServices(dto.BarberId);
-                        if (reservationBarber != null)
-                        {
-                            // Saat Kontrolü
-                            if (reservationBarber.StartTime < dto.Time && reservationBarber.EndTime > dto.Time)
-                            {
-                                // Mesai saati kontrolü başarılı.
-                                return true;
-                            }
-                            else
-                            {
-                                // Berberin mesai saati dışında bir istek.
-                                return false;
-                            }
-                        }
-                    }
+                    // Mesai saati kontrolü başarılı.
+                    return true;
+                }
+                else
+                {
+                    // Berberin mesai saati dışında bir istek.
+                    return false;
                 }
             }
+
             return false;
         }
         public async Task<bool> CheckReservationAvailable(CreateReservationDto dto)

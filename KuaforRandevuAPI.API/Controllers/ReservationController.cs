@@ -36,7 +36,7 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPost("CreateReservation")]
         public async Task<IActionResult> CreateReservation(CreateReservationDto dto)
         {
-           await _reservationService.Create(dto);
+            await _reservationService.Create(dto);
             return Ok(dto);
         }
         [HttpPut("UpdateReservation")]
