@@ -36,20 +36,20 @@ namespace KuaforRandevuAPI.API.Controllers
         [HttpPost("CreateReservation")]
         public async Task<IActionResult> CreateReservation(CreateReservationDto dto)
         {
-            await _reservationService.Create(dto);
-            return Ok(dto);
+            var result = await _reservationService.Create(dto);
+            return Ok(result);
         }
         [HttpPut("UpdateReservation")]
         public async Task<IActionResult> UpdateReservation(UpdateReservationDto dto)
         {
-            await _reservationService.Update(dto);
-            return Ok(dto);
+            var result = await _reservationService.Update(dto);
+            return Ok(result);
         }
         [HttpDelete("RemoveReservation/{id}")]
         public async Task<IActionResult> RemoveReservation(int id)
         {
-            await _reservationService.Remove(id);
-            return Ok("Silme işlemi başarılı");
+            var result = await _reservationService.Remove(id);
+            return Ok(result);
         }
     }
 }

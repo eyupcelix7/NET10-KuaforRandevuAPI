@@ -1,4 +1,5 @@
-﻿using KuaforRandevuAPI.Dtos.Reservation;
+﻿using KuaforRandevuAPI.Common.Responses;
+using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Entities.Enums.Reservation;
 using System;
 using System.Collections.Generic;
@@ -8,17 +9,15 @@ namespace KuaforRandevuAPI.Business.Abstract
 {
     public interface IReservationService
     {
-        Task<List<ResultReservationDto>> GetAllReservations();
-        Task<ResultReservationDto> GetReservationById(int id);
-        Task<List<ResultReservationDto>> GetReservationForToday();
-        Task<List<ResultReservationDto>> GetReservationByBarberId(ReservationStatus status, int barberId);
-
-        Task Create(CreateReservationDto dto);
-        Task Update(UpdateReservationDto dto);
-        Task Remove(int id);
-
-        Task<bool> CheckHourAvailable(CreateReservationDto dto);
-        Task<List<string>> GetReservationSuggestions(CreateReservationDto dto);
-        Task<bool> CheckReservationAvailable(CreateReservationDto dto);
+        Task<ApiResponse<List<ResultReservationDto>>> GetAllReservations();
+        Task<ApiResponse<ResultReservationDto>> GetReservationById(int id);
+        Task<ApiResponse<List<ResultReservationDto>>> GetReservationForToday();
+        Task<ApiResponse<List<ResultReservationDto>>> GetReservationByBarberId(ReservationStatus status, int barberId);
+        Task<ApiResponse<CreateReservationDto>> Create(CreateReservationDto dto);
+        Task<ApiResponse<UpdateReservationDto>> Update(UpdateReservationDto dto);
+        Task<ApiResponse<int>> Remove(int id);
+        Task<List<string>> GetReservationSuggestions(ResultReservationDto dto);
+        Task<bool> CheckHourAvailable(ResultReservationDto dto);
+        Task<bool> CheckReservationAvailable(ResultReservationDto dto);
     }
 }
