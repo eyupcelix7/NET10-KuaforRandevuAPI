@@ -1,5 +1,6 @@
 ﻿using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Dtos.Reservation;
+using KuaforRandevuAPI.Entities.Enums.Reservation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,13 +27,19 @@ namespace KuaforRandevuAPI.API.Controllers
             var reservations = await _reservationService.GetReservationForToday();
             return Ok(reservations);
         }
-
-        [HttpGet("GetReservationById{id}")]
+        [HttpGet("GetReservationById/{id}")]
         public async Task<IActionResult> GetReservationById(int id)
         {
             var reservation = await _reservationService.GetReservationById(id);
             return Ok(reservation);
         }
+        [HttpGet("GetReservationsByBarberId/{id}/{status}")]
+        public async Task<IActionResult> GetReservationsByBarberId(int id, ReservationStatus status)
+        {
+            var values = await _reservationService.GetReservationByBarberId(status, id);
+            return Ok(values);
+        }
+
         [HttpPost("CreateReservation")]
         public async Task<IActionResult> CreateReservation(CreateReservationDto dto)
         {
