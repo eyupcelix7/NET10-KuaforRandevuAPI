@@ -18,7 +18,8 @@ namespace KuaforRandevuAPI.DataAccess.Configurations
             builder
                 .HasOne(x => x.Barber)
                 .WithMany(y => y.Reservations)
-                .HasForeignKey(z => z.BarberId);
+                .HasForeignKey(z => z.BarberId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

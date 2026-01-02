@@ -13,5 +13,6 @@ namespace KuaforRandevuAPI.Entities.Concrete
         public TimeOnly EndTime { get; set; } // Mesai Bitiş Saati
         public List<Reservation>? Reservations { get; set; }
         public List<BarberService>? BarberServices { get; set; }
+        public List<Payment>? Payments { get; set; }
     }
 }
