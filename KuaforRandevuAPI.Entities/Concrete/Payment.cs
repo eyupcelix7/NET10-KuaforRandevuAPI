@@ -1,11 +1,12 @@
-﻿using KuaforRandevuAPI.Entities.Enums.PaymentMethods;
+﻿using KuaforRandevuAPI.Entities.Abstract;
+using KuaforRandevuAPI.Entities.Enums.PaymentMethods;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace KuaforRandevuAPI.Entities.Concrete
 {
-    public class Payment
+    public class Payment:IEntity
     {
         public int Id { get; set; }
         public Barber? Barber { get; set; }
