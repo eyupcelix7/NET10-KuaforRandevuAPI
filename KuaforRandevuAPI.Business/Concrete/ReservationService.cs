@@ -6,6 +6,7 @@ using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Entities.Concrete;
 using KuaforRandevuAPI.Entities.Enums.Reservation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,7 +23,8 @@ namespace KuaforRandevuAPI.Business.Concrete
         private readonly IMapper _mapper;
         private readonly IValidator<CreateReservationDto> _createReservationValidator;
         private readonly IValidator<UpdateReservationDto> _updateReservationValidator;
-        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository, IServiceRepository serviceRepository, IValidator<CreateReservationDto> createReservationValidator, IValidator<UpdateReservationDto> updateReservationValidator)
+        private readonly IValidator<UpdateReservationStatusDto> _updateReservationStatusValidator;
+        public ReservationService(IRepository<Reservation> repository, IMapper mapper, IReservationRepository reservationRepository, IBarberRepository barberRepository, IServiceRepository serviceRepository, IValidator<CreateReservationDto> createReservationValidator, IValidator<UpdateReservationDto> updateReservationValidator, IValidator<UpdateReservationStatusDto> updateReservationStatusValidator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -31,6 +33,7 @@ namespace KuaforRandevuAPI.Business.Concrete
             _serviceRepository = serviceRepository;
             _createReservationValidator = createReservationValidator;
             _updateReservationValidator = updateReservationValidator;
+            _updateReservationStatusValidator = updateReservationStatusValidator;
         }
         public async Task<ApiResponse<List<ResultReservationDto>>> GetAllReservations()
         {
@@ -161,8 +164,26 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<ApiResponse<UpdateReservationStatusDto>> UpdateReservationStatus(UpdateReservationStatusDto dto)
         {
-            await _reservationRepository.ChangeReservationStatus(_mapper.Map<Reservation>(dto));
-            return ApiResponse<UpdateReservationStatusDto>.SuccessResponse(dto, "OK");
+            var validationResult = _updateReservationStatusValidator.Validate(dto);
+            if (validationResult.IsValid)
+            {
+                var updatedReservation = await _repository.GetById(dto.Id);
+                if (updatedReservation != null)
+                {
+                    updatedReservation.Price = dto.Price;
+                    updatedReservation.Status = dto.Status ?? updatedReservation.Status;
+                    await _reservationRepository.ChangeReservationStatus(updatedReservation);
+                    return ApiResponse<UpdateReservationStatusDto>.SuccessResponse(dto, "OK");
+                }
+                else
+                {
+                    return ApiResponse<UpdateReservationStatusDto>.ErrorResponse("Not Found", dto, 404);
+                }
+            }
+            else
+            {
+                return ApiResponse<UpdateReservationStatusDto>.ErrorResponse("Validation Error", validationResult.Errors.Select(x=> x.ErrorMessage));
+            }
         }
         public async Task<bool> CheckHourAvailable(ResultReservationDto dto)
         {

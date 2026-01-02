@@ -18,14 +18,8 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         }
         public async Task ChangeReservationStatus(Reservation reservation)
         {
-            var updatedReservation = await _context.Reservations.Where(x=> x.Id == reservation.Id).FirstOrDefaultAsync();
-            if(updatedReservation != null)
-            {
-                updatedReservation.Price = reservation.Price;
-                updatedReservation.Status = reservation.Status;
-                _context.Reservations.Update(updatedReservation);
-                await _context.SaveChangesAsync();
-            }
+            _context.Reservations.Update(reservation);
+            await _context.SaveChangesAsync();
         }
         public async Task<Reservation?> GetNextReservation(int barberId)
         {
@@ -33,16 +27,15 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
             var nextReservation = await _context.Reservations
-                .Include(x=> x.Barber)
+                .Include(x => x.Barber)
                 .Include(x => x.Service)
-                .Where(x=> x.BarberId == barberId && x.Status == ReservationStatus.Pending && (x.Date > currentDate || (x.Date == currentDate && x.Time > currentTime))) // Tarih bugünden sonra ise veya (tarih bugün ise ve saat şuandan sonra ise)
+                .Where(x => x.BarberId == barberId && x.Status == ReservationStatus.Pending && (x.Date > currentDate || (x.Date == currentDate && x.Time > currentTime))) // Tarih bugünden sonra ise veya (tarih bugün ise ve saat şuandan sonra ise)
                 .OrderBy(x => x.Date)
                 .ThenBy(x => x.Time)
                 .FirstOrDefaultAsync();
 
             return nextReservation;
         }
-
         public async Task<List<Reservation>> GetReservationsByBarberId(ReservationStatus status, int barberId)
         {
             return await _context.Reservations
@@ -51,7 +44,6 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
                 .Include(x => x.Service)
                 .ToListAsync();
         }
-
         public async Task<List<Reservation>> GetReservationsForToday()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);

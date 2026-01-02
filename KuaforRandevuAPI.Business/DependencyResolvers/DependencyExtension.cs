@@ -54,6 +54,7 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             // Reservations
             services.AddTransient<IValidator<CreateReservationDto>, CreateReservationValidator>();
             services.AddTransient<IValidator<UpdateReservationDto>, UpdateReservationValidator>();
+            services.AddTransient<IValidator<UpdateReservationStatusDto>, UpdateReservationStatusValidator>();
         }
     }
 }
