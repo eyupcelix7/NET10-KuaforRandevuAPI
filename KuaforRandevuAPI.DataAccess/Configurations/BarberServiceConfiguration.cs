@@ -17,7 +17,7 @@ namespace KuaforRandevuAPI.DataAccess.Configurations
                 .HasOne(x => x.Barber)
                 .WithMany(y => y.BarberServices)
                 .HasForeignKey(z => z.BarberId);
-            builder
+                builder
                 .HasOne(x=> x.Service)
                 .WithMany(y=> y.BarberServices)
                 .HasForeignKey(z=> z.ServiceId);

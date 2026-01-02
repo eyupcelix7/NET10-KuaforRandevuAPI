@@ -13,6 +13,7 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<ResultReservationDto>> GetReservationById(int id);
         Task<ApiResponse<List<ResultReservationDto>>> GetReservationForToday();
         Task<ApiResponse<List<ResultReservationDto>>> GetReservationByBarberId(ReservationStatus status, int barberId);
+        Task<ResultNextReservationDto> GetNextReservation(int barberId);
         Task<ApiResponse<CreateReservationDto>> Create(CreateReservationDto dto);
         Task<ApiResponse<UpdateReservationDto>> Update(UpdateReservationDto dto);
         Task<ApiResponse<int>> Remove(int id);

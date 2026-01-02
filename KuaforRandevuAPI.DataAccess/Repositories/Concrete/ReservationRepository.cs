@@ -17,12 +17,28 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
             _context = context;
         }
 
+        public async Task<Reservation?> GetNextReservation(int barberId)
+        {
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+            var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+
+            var nextReservation = await _context.Reservations
+                .Include(x=> x.Barber)
+                .Include(x => x.Service)
+                .Where(x=> x.BarberId == barberId && x.Status == ReservationStatus.Pending && (x.Date > currentDate || (x.Date == currentDate && x.Time > currentTime))) // Tarih bugünden sonra ise veya (tarih bugün ise ve saat şuandan sonra ise)
+                .OrderBy(x => x.Date)
+                .ThenBy(x => x.Time)
+                .FirstOrDefaultAsync();
+
+            return nextReservation;
+        }
+
         public async Task<List<Reservation>> GetReservationsByBarberId(ReservationStatus status, int barberId)
         {
             return await _context.Reservations
-                .Where(x=> x.BarberId == barberId && x.Status == status)
-                .Include(x=> x.Barber)
-                .Include(x=> x.Service)
+                .Where(x => x.BarberId == barberId && x.Status == status)
+                .Include(x => x.Barber)
+                .Include(x => x.Service)
                 .ToListAsync();
         }
 

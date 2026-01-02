@@ -56,6 +56,12 @@ namespace KuaforRandevuAPI.Business.Concrete
             var data = _mapper.Map<List<ResultReservationDto>>(reservations);
             return ApiResponse<List<ResultReservationDto>>.SuccessResponse(data, "OK");
         }
+        public async Task<ResultNextReservationDto> GetNextReservation(int barberId)
+        {
+            var reservation = await _reservationRepository.GetNextReservation(barberId);
+            Console.WriteLine(reservation);
+            return _mapper.Map<ResultNextReservationDto>(reservation);
+        }
         public async Task<ApiResponse<CreateReservationDto>> Create(CreateReservationDto dto)
         {
             var validationResult = _createReservationValidator.Validate(dto);

@@ -39,7 +39,6 @@ namespace KuaforRandevuAPI.API.Controllers
             var values = await _reservationService.GetReservationByBarberId(status, id);
             return Ok(values);
         }
-
         [HttpPost("CreateReservation")]
         public async Task<IActionResult> CreateReservation(CreateReservationDto dto)
         {
@@ -57,6 +56,12 @@ namespace KuaforRandevuAPI.API.Controllers
         {
             var result = await _reservationService.Remove(id);
             return Ok(result);
+        }
+        [HttpGet("GetNextReservation/{barberId}")]
+        public async Task<IActionResult> GetNextReservation(int barberId)
+        {
+            var values = await _reservationService.GetNextReservation(barberId);
+            return Ok(values);
         }
     }
 }

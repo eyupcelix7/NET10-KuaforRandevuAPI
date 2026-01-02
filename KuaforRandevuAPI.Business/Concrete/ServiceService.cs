@@ -76,7 +76,6 @@ namespace KuaforRandevuAPI.Business.Concrete
                 if (service != null)
                 {
                     service.Name = dto.Name;
-                    service.Price = dto.Price;
                     service.Duration = dto.Duration;
                     await _repository.Update(service);
                     return ApiResponse<UpdateServiceDto>.SuccessResponse(dto, "OK");

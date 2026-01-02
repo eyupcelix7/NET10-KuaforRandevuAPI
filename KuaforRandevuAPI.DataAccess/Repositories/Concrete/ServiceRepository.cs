@@ -25,7 +25,6 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
                 {
                     Id = w.ServiceId,
                     Name = w.Service!.Name,
-                    Price = w.Service!.Price,
                     Duration = w.Service!.Duration,
                 })
                 .ToListAsync();
