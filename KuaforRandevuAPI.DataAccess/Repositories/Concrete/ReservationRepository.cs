@@ -16,7 +16,17 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         {
             _context = context;
         }
-
+        public async Task ChangeReservationStatus(Reservation reservation)
+        {
+            var updatedReservation = await _context.Reservations.Where(x=> x.Id == reservation.Id).FirstOrDefaultAsync();
+            if(updatedReservation != null)
+            {
+                updatedReservation.Price = reservation.Price;
+                updatedReservation.Status = reservation.Status;
+                _context.Reservations.Update(updatedReservation);
+                await _context.SaveChangesAsync();
+            }
+        }
         public async Task<Reservation?> GetNextReservation(int barberId)
         {
             var currentDate = DateOnly.FromDateTime(DateTime.Now);

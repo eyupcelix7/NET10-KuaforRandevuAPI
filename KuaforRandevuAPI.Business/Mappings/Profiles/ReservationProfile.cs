@@ -15,6 +15,7 @@ namespace KuaforRandevuAPI.Business.Mappings.Profiles
             CreateMap<Reservation, CreateReservationDto>().ReverseMap();
             CreateMap<Reservation, UpdateReservationDto>().ReverseMap();
             CreateMap<Reservation, ResultNextReservationDto>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationStatusDto>().ReverseMap();
 
             CreateMap<CreateReservationDto, ResultReservationDto>().ReverseMap();
             CreateMap<UpdateReservationDto, ResultReservationDto>().ReverseMap();

@@ -159,6 +159,11 @@ namespace KuaforRandevuAPI.Business.Concrete
                 return ApiResponse<int>.ErrorResponse("Not Found", null, 404);
             }
         }
+        public async Task<ApiResponse<UpdateReservationStatusDto>> UpdateReservationStatus(UpdateReservationStatusDto dto)
+        {
+            await _reservationRepository.ChangeReservationStatus(_mapper.Map<Reservation>(dto));
+            return ApiResponse<UpdateReservationStatusDto>.SuccessResponse(dto, "OK");
+        }
         public async Task<bool> CheckHourAvailable(ResultReservationDto dto)
         {
 

@@ -63,5 +63,11 @@ namespace KuaforRandevuAPI.API.Controllers
             var values = await _reservationService.GetNextReservation(barberId);
             return Ok(values);
         }
+        [HttpPut("UpdateReservationStatus")]
+        public async Task<IActionResult> UpdateReservationStatus(UpdateReservationStatusDto dto)
+        {
+            var result = await _reservationService.UpdateReservationStatus(dto);
+            return Ok(result);
+        }
     }
 }

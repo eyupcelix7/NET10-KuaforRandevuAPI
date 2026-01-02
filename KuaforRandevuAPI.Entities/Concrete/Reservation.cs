@@ -18,5 +18,6 @@ namespace KuaforRandevuAPI.Entities.Concrete
         public int BarberId { get; set; }
         public Barber? Barber { get; set; }
         public ReservationStatus Status { get; set; }
+        public decimal Price { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Abstract
         Task<List<Reservation>> GetReservationsForToday();
         Task<List<Reservation>> GetReservationsByBarberId(ReservationStatus status, int barberId);
         Task<Reservation?> GetNextReservation(int barberId);
+        Task ChangeReservationStatus(Reservation reservation); 
     }
 }

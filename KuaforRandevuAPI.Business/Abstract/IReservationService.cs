@@ -17,6 +17,7 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<CreateReservationDto>> Create(CreateReservationDto dto);
         Task<ApiResponse<UpdateReservationDto>> Update(UpdateReservationDto dto);
         Task<ApiResponse<int>> Remove(int id);
+        Task<ApiResponse<UpdateReservationStatusDto>> UpdateReservationStatus(UpdateReservationStatusDto dto);
         Task<List<string>> GetReservationSuggestions(ResultReservationDto dto);
         Task<bool> CheckHourAvailable(ResultReservationDto dto);
         Task<bool> CheckReservationAvailable(ResultReservationDto dto);
