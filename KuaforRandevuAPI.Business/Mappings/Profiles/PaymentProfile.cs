@@ -12,11 +12,10 @@ namespace KuaforRandevuAPI.Business.Mappings.Profiles
         public PaymentProfile()
         {
             CreateMap<Payment, ResultPaymentDto>().ReverseMap();
+            CreateMap<Payment, ResultLastPaymentDto>().ReverseMap();
             CreateMap<Payment, CreatePaymentDto>().ReverseMap();
             CreateMap<Payment, UpdatePaymentDto>().ReverseMap();
-
-            CreateMap<Payment, CreatePaymentDto>().ReverseMap();
-            CreateMap<Payment, UpdatePaymentDto>().ReverseMap();
+            CreateMap<Payment, UpdatePaymentMethodDto>().ReverseMap();
         }
     }
 }

@@ -20,9 +20,10 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForThisMonth();
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsWithDate(DateTime startDate, DateTime endDate);
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByBarberIdWithDate(int barberId, DateTime startDate, DateTime endDate);
-        Task<ApiResponse<List<ResultPaymentDto>>> GetOnCreditPaymentsWithDate(DateTime startDate, DateTime endDate);
-        Task<ApiResponse<List<ResultPaymentDto>>> GetCashPaymentsWithDate(DateTime startDate, DateTime endDate);
-        Task<ApiResponse<List<ResultPaymentDto>>> GetCreditCardPaymentsWithDate(DateTime startDate, DateTime endDate);
-        Task<ApiResponse<ResultPaymentDto?>> GetLastPaymentWithCustomer();
+        Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByOnCreditWithDate(DateTime startDate, DateTime endDate);
+        Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByCashWithDate(DateTime startDate, DateTime endDate);
+        Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByCreditCardWithDate(DateTime startDate, DateTime endDate);
+        Task<ApiResponse<ResultLastPaymentDto?>> GetLastPaymentWithCustomer();
+        Task<ApiResponse<UpdatePaymentMethodDto>> UpdatePaymentMethod(UpdatePaymentMethodDto dto);
     }
 }

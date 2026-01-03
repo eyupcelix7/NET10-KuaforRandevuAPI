@@ -1,4 +1,5 @@
 ﻿using KuaforRandevuAPI.Entities.Concrete;
+using KuaforRandevuAPI.Entities.Enums.PaymentMethods;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,5 +17,6 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Abstract
         Task<List<Payment>> GetCashPaymentsWithDate(DateTime startDate, DateTime endDate);
         Task<List<Payment>> GetCreditCardPaymentsWithDate(DateTime startDate, DateTime endDate);
         Task<Payment?> GetLastPaymentWithCustomer();
+        Task UpdatePaymentMethod(Payment payment);
     }
 }

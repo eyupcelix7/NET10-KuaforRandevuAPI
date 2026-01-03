@@ -21,17 +21,17 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
         public async Task<List<Payment>> GetPaymentsForToday()
         {
             return await _context.Payments
-                .Where(x => x.Date == DateTime.Today)
+                .Where(x => x.Date.Date == DateTime.Today)
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
         }
         public async Task<List<Payment>> GetPaymentsForThisWeek()
         {
             // Pazartesiyi bulmak için bugun haftanın hangi günü +1 olarak alıyoruz ve geriye doğru saydırıyoruz.
-            var monday = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek - +1);
+            var monday = DateTime.Today.AddDays(- (int) DateTime.Today.DayOfWeek +1);
             var sunday = monday.AddDays(6); // Pazar günü, mantıksal filtreleme de kullanılacak.
             return await _context.Payments
-                .Where(x => x.Date >= monday && x.Date <= sunday)
+                .Where(x => x.Date.Date >= monday && x.Date.Date <= sunday)
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
         }
@@ -40,7 +40,7 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
             DateTime firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 01); // Ayın başlangıcı
             DateTime lastDatOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1); // Ayın son günü için 1 ay ekleyip 1 gün çıkarıyoruz ve böylelikle son günü alıyoruz.
             return await _context.Payments
-                .Where(x => x.Date >= firstDayOfMonth && x.Date <= lastDatOfMonth)
+                .Where(x => x.Date.Date >= firstDayOfMonth && x.Date.Date <= lastDatOfMonth)
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
         }
@@ -86,6 +86,11 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
                 .OrderByDescending(x => x.Id)
                 .Take(1)
                 .FirstOrDefaultAsync();
+        }
+        public async Task UpdatePaymentMethod(Payment payment)
+        {
+            _context.Payments.Update(payment);
+            await _context.SaveChangesAsync();
         }
     }
 }
