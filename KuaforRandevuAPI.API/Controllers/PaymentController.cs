@@ -26,19 +26,19 @@ namespace KuaforRandevuAPI.API.Controllers
             var result = await _service.GetPaymentById(id);
             return Ok(result);
         }
-        [HttpPost]
+        [HttpPost("CreatePayment")]
         public async Task<IActionResult> CreatePayment(CreatePaymentDto dto)
         {
             var result = await _service.CreatePayment(dto);
             return Ok(result);
         }
-        [HttpPut]
+        [HttpPut("UpdatePayment")]
         public async Task<IActionResult> UpdatePayment(UpdatePaymentDto dto)
         {
             var result = await _service.UpdatePayment(dto);
             return Ok(result);
         }
-        [HttpDelete]
+        [HttpDelete("RemovePayment/{id}")]
         public async Task<IActionResult> RemovePayment(int id)
         {
             var result = _service.RemovePayment(id);
