@@ -15,6 +15,6 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Abstract
         Task<List<Payment>> GetOnCreditPaymentsWithDate(DateTime startDate, DateTime endDate);
         Task<List<Payment>> GetCashPaymentsWithDate(DateTime startDate, DateTime endDate);
         Task<List<Payment>> GetCreditCardPaymentsWithDate(DateTime startDate, DateTime endDate);
-        Task<Payment?> GetLastPayment();
+        Task<Payment?> GetLastPaymentWithCustomer();
     }
 }

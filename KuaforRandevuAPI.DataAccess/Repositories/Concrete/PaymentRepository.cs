@@ -78,9 +78,11 @@ namespace KuaforRandevuAPI.DataAccess.Repositories.Concrete
                 .OrderByDescending(x => x.Date)
                 .ToListAsync();
         }
-        public async Task<Payment?> GetLastPayment()
+        public async Task<Payment?> GetLastPaymentWithCustomer()
         {
             return await _context.Payments
+                .Include(x=> x.Reservation)
+                .Include(x=> x.Barber)
                 .OrderByDescending(x => x.Id)
                 .Take(1)
                 .FirstOrDefaultAsync();
