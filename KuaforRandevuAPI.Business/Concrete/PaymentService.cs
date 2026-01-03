@@ -14,10 +14,12 @@ namespace KuaforRandevuAPI.Business.Concrete
     {
         private readonly IRepository<Payment> _repository;
         private readonly IMapper _mapper;
-        public PaymentService(IRepository<Payment> repository,IMapper mapper)
+        private readonly IPaymentRepository _paymentRepository;
+        public PaymentService(IRepository<Payment> repository, IMapper mapper, IPaymentRepository paymentRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _paymentRepository = paymentRepository;
         }
         public async Task<ApiResponse<List<ResultPaymentDto>>> GetAllPayments()
         {
@@ -52,6 +54,60 @@ namespace KuaforRandevuAPI.Business.Concrete
             var payment = await _repository.GetById(id);
             await _repository.Remove(payment);
             return ApiResponse<int>.SuccessResponse(id, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForToday()
+        {
+            var payments = await _paymentRepository.GetPaymentsForToday();
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForThisWeek()
+        {
+            var payments = await _paymentRepository.GetPaymentsForThisWeek();
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForThisMonth()
+        {
+            var payments = await _paymentRepository.GetPaymentsForThisMonth();
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsWithDate(DateTime startDate, DateTime endDate)
+        {
+            var payments = await _paymentRepository.GetPaymentsWithDate(startDate, endDate);
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByBarberIdWithDate(int barberId, DateTime startDate, DateTime endDate)
+        {
+            var payments = await _paymentRepository.GetPaymentsByBarberIdWithDate(barberId, startDate, endDate);
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetOnCreditPaymentsWithDate(DateTime startDate, DateTime endDate)
+        {
+            var payments = await _paymentRepository.GetOnCreditPaymentsWithDate(startDate, endDate);
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetCashPaymentsWithDate(DateTime startDate, DateTime endDate)
+        {
+            var payments = await _paymentRepository.GetCashPaymentsWithDate(startDate, endDate);
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<List<ResultPaymentDto>>> GetCreditCardPaymentsWithDate(DateTime startDate, DateTime endDate)
+        {
+            var payments = await _paymentRepository.GetCreditCardPaymentsWithDate(startDate, endDate);
+            var data = _mapper.Map<List<ResultPaymentDto>>(payments);
+            return ApiResponse<List<ResultPaymentDto>>.SuccessResponse(data, "OK");
+        }
+        public async Task<ApiResponse<ResultPaymentDto?>> GetLastPaymentWithCustomer()
+        {
+            var payments = await _paymentRepository.GetLastPaymentWithCustomer();
+            var data = _mapper.Map<ResultPaymentDto>(payments);
+            return ApiResponse<ResultPaymentDto?>.SuccessResponse(data, "OK");
         }
     }
 }
