@@ -53,6 +53,7 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             // Barbers
             services.AddTransient<IValidator<CreateBarberDto>, CreateBarberValidator>();
             services.AddTransient<IValidator<UpdateBarberDto>, UpdateBarberValidator>();
+            services.AddTransient<IValidator<RemoveBarberDto>, RemoveBarberValidator>();
             // Services
             services.AddTransient<IValidator<CreateServiceDto>, CreateServiceValidator>();
             services.AddTransient<IValidator<UpdateServiceDto>, UpdateServiceValidator>();

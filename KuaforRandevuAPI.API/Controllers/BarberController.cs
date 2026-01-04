@@ -32,16 +32,16 @@ namespace KuaforRandevuAPI.API.Controllers
             }
             return Ok(barber);
         }
-        [HttpPost("CreateBarber")]
-        public async Task<IActionResult> CreateBarber(CreateBarberDto dto)
-        {
-           var values = await _service.CreateBarber(dto);
-            return Ok(values);
-        }
         [HttpGet("GetBarberByIdWithServices/{id}")]
         public async Task<IActionResult> GetBarberByIdWithServices(int id)
         {
             var values = await _service.GetBarberByIdWithServices(id);
+            return Ok(values);
+        }
+        [HttpPost("CreateBarber")]
+        public async Task<IActionResult> CreateBarber(CreateBarberDto dto)
+        {
+           var values = await _service.CreateBarber(dto);
             return Ok(values);
         }
         [HttpPut("UpdateBarber")]
@@ -50,7 +50,7 @@ namespace KuaforRandevuAPI.API.Controllers
             var values = await _service.UpdateBarber(dto);
             return Ok(values);
         }
-        [HttpDelete]
+        [HttpDelete("RemoveBarber/{id}")]
         public async Task<IActionResult> RemoveBarber(int id)
         {
             await _service.RemoveBarber(id);

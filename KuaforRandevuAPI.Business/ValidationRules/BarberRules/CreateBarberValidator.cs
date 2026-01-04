@@ -21,17 +21,9 @@ namespace KuaforRandevuAPI.Business.ValidationRules.BarberRules
             RuleFor(x => x.StartTime).LessThan(x => x.EndTime).WithMessage("Mesai başlangıç saati, mesai bitiş saatinden önce olmalıdır.");
             RuleFor(x => x.Name).Must(BeUniqueName).WithMessage("Bu ad soyad ile bir berber zaten mevcut.");
         }
-
         private bool BeUniqueName(string? barberName)
         {
-            if (!string.IsNullOrWhiteSpace(barberName))
-            {
-                return !_repository.checkNameExists(barberName);
-            }
-            else
-            {
-                return false;
-            }
+            return !_repository.checkNameExists(barberName ?? "");
         }
     }
 }
