@@ -13,7 +13,8 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<ResultPaymentDto>> GetPaymentById(int id);
         Task<ApiResponse<CreatePaymentDto>> CreatePayment(CreatePaymentDto dto);
         Task<ApiResponse<UpdatePaymentDto>> UpdatePayment(UpdatePaymentDto dto);
-        Task<ApiResponse<int>> RemovePayment(int id);
+        Task<ApiResponse<UpdatePaymentMethodDto>> UpdatePaymentMethod(UpdatePaymentMethodDto dto);
+        Task<ApiResponse<RemovePaymentDto>> RemovePayment(int id);
         
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForToday();
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsForThisWeek();
@@ -24,6 +25,5 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByCashWithDate(DateTime startDate, DateTime endDate);
         Task<ApiResponse<List<ResultPaymentDto>>> GetPaymentsByCreditCardWithDate(DateTime startDate, DateTime endDate);
         Task<ApiResponse<ResultLastPaymentDto?>> GetLastPaymentWithCustomer();
-        Task<ApiResponse<UpdatePaymentMethodDto>> UpdatePaymentMethod(UpdatePaymentMethodDto dto);
     }
 }

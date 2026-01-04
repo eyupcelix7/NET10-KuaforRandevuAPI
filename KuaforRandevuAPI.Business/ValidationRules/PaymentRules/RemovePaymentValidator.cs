@@ -2,36 +2,26 @@
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Payment;
 using KuaforRandevuAPI.Entities.Concrete;
-using KuaforRandevuAPI.Entities.Enums.PaymentMethods;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace KuaforRandevuAPI.Business.ValidationRules.PaymentRules
 {
-    public class UpdatePaymentMethodValidator : AbstractValidator<UpdatePaymentMethodDto>
+    public class RemovePaymentValidator:AbstractValidator<RemovePaymentDto>
     {
         private readonly IRepository<Payment> _repository;
-        public UpdatePaymentMethodValidator(IRepository<Payment> repository)
+        public RemovePaymentValidator(IRepository<Payment> repository)
         {
             _repository = repository;
-         
-            RuleFor(x => x.Id).NotNull()
-                .WithMessage("Id boş olamaz.");
-            RuleFor(x => x.PaymentMethod)
-                .NotNull()
-                .WithMessage("Ödeme yöntemi boş olamaz.");
-            RuleFor(x => x.PaymentMethod)
-                .IsInEnum()
-                .WithMessage("Lütfen geçerli bir ödeme yöntemi seçiniz.");
-            // Repository kontrolleri
+            RuleFor(x=> x.Id).NotNull().WithMessage("Id boş olamaz.");
             RuleFor(x => x.Id).MustAsync(CheckPayment).WithMessage("Böyle bir ödeme bulunamadı.");
         }
         private async Task<bool> CheckPayment(int arg1, CancellationToken token)
         {
-            var check = await _repository.GetById(arg1);
-            if(check != null)
-            { 
+            var payment = await _repository.GetById(arg1);
+            if(payment != null)
+            {
                 return true;
             }
             else

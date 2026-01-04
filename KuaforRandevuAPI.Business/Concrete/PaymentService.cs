@@ -19,7 +19,8 @@ namespace KuaforRandevuAPI.Business.Concrete
         private readonly IValidator<CreatePaymentDto> _createPaymentValidator;
         private readonly IValidator<UpdatePaymentDto> _updatePaymentValidator;
         private readonly IValidator<UpdatePaymentMethodDto> _updatePaymentMethodValidator;
-        public PaymentService(IRepository<Payment> repository, IMapper mapper, IPaymentRepository paymentRepository, IValidator<CreatePaymentDto> createPaymentValidator, IValidator<UpdatePaymentDto> updatePaymentValidator, IValidator<UpdatePaymentMethodDto> updatePaymentMethodValidator)
+        private readonly IValidator<RemovePaymentDto> _removePaymentValidator;
+        public PaymentService(IRepository<Payment> repository, IMapper mapper, IPaymentRepository paymentRepository, IValidator<CreatePaymentDto> createPaymentValidator, IValidator<UpdatePaymentDto> updatePaymentValidator, IValidator<UpdatePaymentMethodDto> updatePaymentMethodValidator, IValidator<RemovePaymentDto> removePaymentValidator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -27,6 +28,7 @@ namespace KuaforRandevuAPI.Business.Concrete
             _createPaymentValidator = createPaymentValidator;
             _updatePaymentValidator = updatePaymentValidator;
             _updatePaymentMethodValidator = updatePaymentMethodValidator;
+            _removePaymentValidator = removePaymentValidator;
         }
         public async Task<ApiResponse<List<ResultPaymentDto>>> GetAllPayments()
         {
@@ -96,7 +98,7 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<ApiResponse<CreatePaymentDto>> CreatePayment(CreatePaymentDto dto)
         {
-            var validationResult = _createPaymentValidator.Validate(dto);
+            var validationResult = await _createPaymentValidator.ValidateAsync(dto);
             if (validationResult.IsValid)
             {
                 await _repository.Add(_mapper.Map<Payment>(dto));
@@ -109,24 +111,18 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<ApiResponse<UpdatePaymentDto>> UpdatePayment(UpdatePaymentDto dto)
         {
-            var validationResult = _updatePaymentValidator.Validate(dto);
+            var validationResult = await _updatePaymentValidator.ValidateAsync(dto);
             if (validationResult.IsValid)
             {
                 var updatedPayment = await _repository.GetById(dto.Id);
-                if (updatedPayment != null)
-                {
-                    updatedPayment.BarberId = dto.BarberId;
-                    updatedPayment.ReservationId = dto.ReservationId;
-                    updatedPayment.Date = dto.Date;
-                    updatedPayment.Amount = dto.Amount;
-                    updatedPayment.PaymentMethod = dto.PaymentMethod;
-                    await _repository.Update(updatedPayment);
-                    return ApiResponse<UpdatePaymentDto>.SuccessResponse(dto, "OK");
-                }
-                else
-                {
-                    return ApiResponse<UpdatePaymentDto>.ErrorResponse("Not Found", null, 404);
-                }
+                // Kontrol işlemleri fluent validation'a taşındı.
+                updatedPayment!.BarberId = dto.BarberId;
+                updatedPayment.ReservationId = dto.ReservationId;
+                updatedPayment.Date = dto.Date;
+                updatedPayment.Amount = dto.Amount;
+                updatedPayment.PaymentMethod = dto.PaymentMethod;
+                await _repository.Update(updatedPayment);
+                return ApiResponse<UpdatePaymentDto>.SuccessResponse(dto, "OK");
             }
             else
             {
@@ -135,31 +131,34 @@ namespace KuaforRandevuAPI.Business.Concrete
         }
         public async Task<ApiResponse<UpdatePaymentMethodDto>> UpdatePaymentMethod(UpdatePaymentMethodDto dto)
         {
-            var validationResult = _updatePaymentMethodValidator.Validate(dto);
+            var validationResult = await _updatePaymentMethodValidator.ValidateAsync(dto);
             if (validationResult.IsValid)
             {
                 var payment = await _repository.GetById(dto.Id);
-                if (payment != null)
-                {
-                    payment.PaymentMethod = dto.PaymentMethod;
-                    await _paymentRepository.UpdatePaymentMethod(payment);
-                    return ApiResponse<UpdatePaymentMethodDto>.SuccessResponse(dto, "OK");
-                }
-                else
-                {
-                    return ApiResponse<UpdatePaymentMethodDto>.ErrorResponse("Not Found", null, 404);
-                }
+                // Kontrol işlemleri fluent validation'a taşındı.
+                payment!.PaymentMethod = dto.PaymentMethod;
+                await _paymentRepository.UpdatePaymentMethod(payment);
+                return ApiResponse<UpdatePaymentMethodDto>.SuccessResponse(dto, "OK");
             }
             else
             {
-                return ApiResponse<UpdatePaymentMethodDto>.ErrorResponse("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage));
+                return ApiResponse<UpdatePaymentMethodDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
             }
         }
-        public async Task<ApiResponse<int>> RemovePayment(int id)
+        public async Task<ApiResponse<RemovePaymentDto>> RemovePayment(int id)
         {
-            var payment = await _repository.GetById(id);
-            await _repository.Remove(payment);
-            return ApiResponse<int>.SuccessResponse(id, "OK");
+            var removeDto = new RemovePaymentDto { Id = id };
+            var validationResult = await _removePaymentValidator.ValidateAsync(removeDto);
+            if (validationResult.IsValid)
+            {
+                var payment = await _repository.GetById(id);
+                await _repository.Remove(payment!);
+                return ApiResponse<RemovePaymentDto>.SuccessResponse(removeDto, "OK");
+            }
+            else
+            {
+                return ApiResponse<RemovePaymentDto>.ErrorResponse("Not Found", validationResult.Errors.Select(x => x.ErrorMessage),404);
+            }
         }
     }
 }

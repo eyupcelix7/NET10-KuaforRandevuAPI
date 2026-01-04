@@ -64,6 +64,7 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             services.AddTransient<IValidator<CreatePaymentDto>, CreatePaymentValidator>();
             services.AddTransient<IValidator<UpdatePaymentDto>, UpdatePaymentValidator>();
             services.AddTransient<IValidator<UpdatePaymentMethodDto>, UpdatePaymentMethodValidator>();
+            services.AddTransient<IValidator<RemovePaymentDto>, RemovePaymentValidator>();
         }
     }
 }
