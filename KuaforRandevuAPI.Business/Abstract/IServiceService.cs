@@ -13,6 +13,6 @@ namespace KuaforRandevuAPI.Business.Abstract
         Task<ApiResponse<List<ResultServiceDto>>> GetServicesByBarberId(int id);
         Task<ApiResponse<CreateServiceDto>> CreateService(CreateServiceDto dto);
         Task<ApiResponse<UpdateServiceDto>> UpdateService(UpdateServiceDto dto);
-        Task<ApiResponse<int>> RemoveService(int id);
+        Task<ApiResponse<RemoveServiceDto>> RemoveService(int id);
     }
 }

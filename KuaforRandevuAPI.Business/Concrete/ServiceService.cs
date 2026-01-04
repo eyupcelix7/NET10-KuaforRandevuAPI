@@ -19,43 +19,37 @@ namespace KuaforRandevuAPI.Business.Concrete
         private readonly IServiceRepository _serviceRepository;
         private readonly IValidator<CreateServiceDto> _createServiceValidator;
         private readonly IValidator<UpdateServiceDto> _updateServiceValidator;
-        public ServiceService(IMapper mapper, IRepository<Service> repository, IValidator<CreateServiceDto> createServiceValidator, IValidator<UpdateServiceDto> updateServiceValidator, IServiceRepository serviceRepository)
+        private readonly IValidator<RemoveServiceDto> _removeServiceValidator;
+        public ServiceService(IMapper mapper, IRepository<Service> repository, IValidator<CreateServiceDto> createServiceValidator, IValidator<UpdateServiceDto> updateServiceValidator, IServiceRepository serviceRepository, IValidator<RemoveServiceDto> removeServiceValidator)
         {
             _mapper = mapper;
             _repository = repository;
             _createServiceValidator = createServiceValidator;
             _updateServiceValidator = updateServiceValidator;
             _serviceRepository = serviceRepository;
+            _removeServiceValidator = removeServiceValidator;
         }
-        public async Task<ApiResponse<List<ResultServiceDto>>> GetAllService() 
+        public async Task<ApiResponse<List<ResultServiceDto>>> GetAllService()
         {
             var services = await _repository.GetAll();
             var data = _mapper.Map<List<ResultServiceDto>>(services);
-            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data);
+            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data, "OK");
         }
         public async Task<ApiResponse<ResultServiceDto>> GetServiceById(int id)
         {
             var service = await _repository.GetById(id);
-            if(service != null)
-            {
-                var data = _mapper.Map<ResultServiceDto>(service);
-                return ApiResponse<ResultServiceDto>.SuccessResponse(data);
-            }
-            else
-            {
-                return ApiResponse<ResultServiceDto>.ErrorResponse("Not Found", null, 404);
-            }
+            var data = _mapper.Map<ResultServiceDto>(service);
+            return ApiResponse<ResultServiceDto>.SuccessResponse(data, "OK");
         }
         public async Task<ApiResponse<List<ResultServiceDto>>> GetServicesByBarberId(int id)
         {
             var values = await _serviceRepository.GetServicesByBarberId(id);
             var data = _mapper.Map<List<ResultServiceDto>>(values);
-            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data);
+            return ApiResponse<List<ResultServiceDto>>.SuccessResponse(data, "OK");
         }
         public async Task<ApiResponse<CreateServiceDto>> CreateService(CreateServiceDto dto)
         {
-            var validationResult = _createServiceValidator.Validate(dto);
-
+            var validationResult = await _createServiceValidator.ValidateAsync(dto);
             if (validationResult.IsValid)
             {
                 var data = _mapper.Map<Service>(dto);
@@ -64,38 +58,39 @@ namespace KuaforRandevuAPI.Business.Concrete
             }
             else
             {
-                return ApiResponse<CreateServiceDto>.ErrorResponse("Validation Error",validationResult.Errors.Select(x=> x.ErrorMessage));
+                return ApiResponse<CreateServiceDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
             }
         }
         public async Task<ApiResponse<UpdateServiceDto>> UpdateService(UpdateServiceDto dto)
         {
-            var validationResult = _updateServiceValidator.Validate(dto);
+            var validationResult = await _updateServiceValidator.ValidateAsync(dto);
             if (validationResult.IsValid)
             {
                 var service = await _repository.GetById(dto.Id);
-                if (service != null)
-                {
-                    service.Name = dto.Name;
-                    service.Duration = dto.Duration;
-                    await _repository.Update(service);
-                    return ApiResponse<UpdateServiceDto>.SuccessResponse(dto, "OK");
-                }
-                return ApiResponse<UpdateServiceDto>.ErrorResponse("Not Found", null ,404);
+                service!.Name = dto.Name;
+                service.Duration = dto.Duration;
+                await _repository.Update(service);
+                return ApiResponse<UpdateServiceDto>.SuccessResponse(dto, "OK");
             }
             else
             {
-                return ApiResponse<UpdateServiceDto>.ErrorResponse("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage));
+                return ApiResponse<UpdateServiceDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
             }
         }
-        public async Task<ApiResponse<int>> RemoveService(int id)
+        public async Task<ApiResponse<RemoveServiceDto>> RemoveService(int id)
         {
-            var service = await _repository.GetById(id);
-            if(service != null)
+            RemoveServiceDto removeDto = new RemoveServiceDto { Id = id };
+            var validationResult = await _removeServiceValidator.ValidateAsync(removeDto);
+            if (validationResult.IsValid)
             {
-                await _repository.Remove(service);
-                return ApiResponse<int>.SuccessResponse(id,"OK");
+                var service = await _repository.GetById(id);
+                await _repository.Remove(service!);
+                return ApiResponse<RemoveServiceDto>.SuccessResponse(removeDto, "OK");
             }
-            return ApiResponse<int>.ErrorResponse("Not Found", null, 404);
+            else
+            {
+                return ApiResponse<RemoveServiceDto>.ErrorResponse("Validasyon Hatası", validationResult.Errors.Select(x => x.ErrorMessage));
+            }
         }
     }
 }

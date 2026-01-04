@@ -23,37 +23,37 @@ namespace KuaforRandevuAPI.API.Controllers
         public async Task<IActionResult> GetAllServices()
         {
             var result = await _service.GetAllService();
-            return Ok(result);
+            return StatusCode(result.Status,result);
         }
-        [HttpGet("GetServiceById")]
+        [HttpGet("GetServiceById/{id}")]
         public async Task<IActionResult> GetServiceById(int id)
         {
             var result = await _service.GetServiceById(id);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [HttpGet("GetServicesByBarberId/{id}")]
         public async Task<IActionResult> GetServicesByBarberId(int id)
         {
             var result = await _service.GetServicesByBarberId(id);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPost("CreateService")]
         public async Task<IActionResult> CreateService(CreateServiceDto dto)
         {
             var result = await _service.CreateService(_mapper.Map<CreateServiceDto>(dto));
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
         [HttpPut("UpdateService")]
         public async Task<IActionResult> UpdateService(UpdateServiceDto dto)
         {
             var result = await _service.UpdateService(dto);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
-        [HttpDelete]
+        [HttpDelete("RemoveService/{id}")]
         public async Task<IActionResult> RemoveService(int id)
         {
             var result = await _service.RemoveService(id);
-            return Ok(result);
+            return StatusCode(result.Status, result);
         }
     }
 }

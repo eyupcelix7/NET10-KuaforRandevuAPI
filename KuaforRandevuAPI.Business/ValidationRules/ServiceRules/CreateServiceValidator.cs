@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.Dtos.Services;
+using KuaforRandevuAPI.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,11 +10,29 @@ namespace KuaforRandevuAPI.Business.ValidationRules.ServiceRules
 {
     public class CreateServiceValidator: AbstractValidator<CreateServiceDto>
     {
-        public CreateServiceValidator()
+        private readonly IRepository<Barber> _repository;
+        public CreateServiceValidator(IRepository<Barber> repository)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Ad kısımı boş olamaz");
-            RuleFor(x => x.Duration).NotEmpty().WithMessage("Süre kısımı boş olamaz");
-            RuleFor(x => x.BarberId).NotEmpty().WithMessage("Berber kısımı boş olamaz");
+            _repository = repository;
+
+            RuleFor(x => x.Name).NotNull().WithMessage("Ad boş olamaz.");
+            RuleFor(x => x.Duration).NotNull().WithMessage("Süre boş olamaz.");
+            RuleFor(x => x.BarberId).NotNull().WithMessage("Berber boş olamaz.");
+
+            RuleFor(x => x.BarberId).MustAsync(CheckBarber).WithMessage("Böyle bir berber bulunamadı.");
+        }
+
+        private async Task<bool> CheckBarber(int arg1, CancellationToken token)
+        {
+            var barber = await _repository.GetById(arg1);
+            if(barber != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

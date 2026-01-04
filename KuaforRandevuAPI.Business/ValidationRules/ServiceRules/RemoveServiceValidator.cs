@@ -8,22 +8,21 @@ using System.Text;
 
 namespace KuaforRandevuAPI.Business.ValidationRules.ServiceRules
 {
-    public class UpdateServiceValidator : AbstractValidator<UpdateServiceDto>
+    public class RemoveServiceValidator : AbstractValidator<RemoveServiceDto>
     {
         private readonly IRepository<Service> _repository;
-        public UpdateServiceValidator(IRepository<Service> repository)
+        public RemoveServiceValidator(IRepository<Service> repository)
         {
             _repository = repository;
 
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Ad kısımı boş olamaz.");
-            RuleFor(x => x.Duration).NotEmpty().WithMessage("Süre kısımı boş olamaz.");
-
+            RuleFor(x => x.Id).NotNull().WithMessage("Id boş olamaz.");
             RuleFor(x => x.Id).MustAsync(CheckService).WithMessage("Böyle bir hizmet bulunamadı.");
         }
+
         private async Task<bool> CheckService(int arg1, CancellationToken token)
         {
             Service? service = await _repository.GetById(arg1);
-            if(service != null)
+            if (service != null)
             {
                 return true;
             }
