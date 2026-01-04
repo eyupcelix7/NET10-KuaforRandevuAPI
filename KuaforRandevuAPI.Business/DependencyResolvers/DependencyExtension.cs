@@ -3,12 +3,14 @@ using KuaforRandevuAPI.Business.Abstract;
 using KuaforRandevuAPI.Business.Concrete;
 using KuaforRandevuAPI.Business.Mappings.Profiles;
 using KuaforRandevuAPI.Business.ValidationRules.BarberRules;
+using KuaforRandevuAPI.Business.ValidationRules.PaymentRules;
 using KuaforRandevuAPI.Business.ValidationRules.ReservationRules;
 using KuaforRandevuAPI.Business.ValidationRules.ServiceRules;
 using KuaforRandevuAPI.DataAccess.Context;
 using KuaforRandevuAPI.DataAccess.Repositories.Abstract;
 using KuaforRandevuAPI.DataAccess.Repositories.Concrete;
 using KuaforRandevuAPI.Dtos.Barber;
+using KuaforRandevuAPI.Dtos.Payment;
 using KuaforRandevuAPI.Dtos.Reservation;
 using KuaforRandevuAPI.Dtos.Services;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +60,10 @@ namespace KuaforRandevuAPI.Business.DependencyResolvers
             services.AddTransient<IValidator<CreateReservationDto>, CreateReservationValidator>();
             services.AddTransient<IValidator<UpdateReservationDto>, UpdateReservationValidator>();
             services.AddTransient<IValidator<UpdateReservationStatusDto>, UpdateReservationStatusValidator>();
+            // Payments
+            services.AddTransient<IValidator<CreatePaymentDto>, CreatePaymentValidator>();
+            services.AddTransient<IValidator<UpdatePaymentDto>, UpdatePaymentValidator>();
+            services.AddTransient<IValidator<UpdatePaymentMethodDto>, UpdatePaymentMethodValidator>();
         }
     }
 }
